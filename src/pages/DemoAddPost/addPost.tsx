@@ -9,13 +9,15 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CreateIcon from '@mui/icons-material/Create';
-import { Button,ThemeProvider, createTheme, styled } from '@mui/material';
+import { Button, InputLabel, Select, SelectChangeEvent, ThemeProvider, createTheme, styled } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import HomeNavbar from '@/components/HomeNavbar';
 import TextField from '@mui/material/TextField';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useDispatch, useSelector } from 'react-redux';
 import { PostListState, createPost } from '../../slice/listSlice';
+import ClearIcon from '@mui/icons-material/Clear';
+import FormControl from '@mui/material/FormControl';
 
 const theme = createTheme();
 const VisuallyHiddenInput = styled('input')({
@@ -36,6 +38,13 @@ export type ListItem = {
 };
 
 function AddPost() {
+    //看板
+    const allBoard=["音樂看板","星座看板","NEC員工專屬看板"];
+    const [selectBoard, setSelectBoard] = React.useState('');
+    const handleChange = (event: SelectChangeEvent) => {
+        setSelectBoard(event.target.value as string);
+    };
+
     const [title, setTitle] = React.useState('');
     const [imageURL, setImageURL] = React.useState('');
     const [context, setContext] = React.useState('');
@@ -71,118 +80,10 @@ function AddPost() {
         }
     };
 
-    //AppBar
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
-        React.useState<null | HTMLElement>(null);
-    const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleMobileMenuClose = () => {
-        setMobileMoreAnchorEl(null);
-    };
-    const handleMenuClose = () => {
-        setAnchorEl(null);
-        handleMobileMenuClose();
-    };
-    const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-        setMobileMoreAnchorEl(event.currentTarget);
-    };
-    const isMenuOpen = Boolean(anchorEl);
-    const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-    const menuId = 'primary-search-account-menu';
-    const renderMenu = (
-        <Menu
-            anchorEl={anchorEl}
-            anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-            }}
-            id={menuId}
-            keepMounted
-            transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-            }}
-            open={isMenuOpen}
-            onClose={handleMenuClose}
-        >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-        </Menu>
-    );
-    const mobileMenuId = 'primary-search-account-menu-mobile';
-    const renderMobileMenu = (
-        <Menu
-            anchorEl={mobileMoreAnchorEl}
-            anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-            }}
-            id={mobileMenuId}
-            keepMounted
-            transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-            }}
-            open={isMobileMenuOpen}
-            onClose={handleMobileMenuClose}
-        >
-            <MenuItem>
-                <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                    <Badge badgeContent={4} color="error">
-                        <PersonAddIcon />
-                    </Badge>
-                </IconButton>
-                <p>Messages</p>
-            </MenuItem>
-            <MenuItem>
-                <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                    <Badge badgeContent={4} color="error">
-                        <CreateIcon />
-                    </Badge>
-                </IconButton>
-                <p>Messages</p>
-            </MenuItem>
-
-            <MenuItem>
-                <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                    <Badge badgeContent={4} color="error">
-                        <MailIcon />
-                    </Badge>
-                </IconButton>
-                <p>Messages</p>
-            </MenuItem>
-            <MenuItem>
-                <IconButton
-                    size="large"
-                    aria-label="show 17 new notifications"
-                    color="inherit"
-                >
-                    <Badge badgeContent={17} color="error">
-                        <NotificationsIcon />
-                    </Badge>
-                </IconButton>
-                <p>Notifications</p>
-            </MenuItem>
-            <MenuItem onClick={handleProfileMenuOpen}>
-                <IconButton
-                    size="large"
-                    aria-label="account of current user"
-                    aria-controls="primary-search-account-menu"
-                    aria-haspopup="true"
-                    color="inherit"
-                >
-                    <AccountCircle />
-                </IconButton>
-                <p>Profile</p>
-            </MenuItem>
-        </Menu>
-
-    );
     return (
         <ThemeProvider theme={theme}>
-            <HomeNavbar menuId={menuId} handleProfileMenuOpen={handleProfileMenuOpen} mobileMenuId={mobileMenuId} handleMobileMenuOpen={handleMobileMenuOpen} renderMobileMenu={renderMobileMenu} renderMenu={renderMenu}></HomeNavbar>
+            {/* <HomeNavbar menuId={menuId} handleProfileMenuOpen={handleProfileMenuOpen} mobileMenuId={mobileMenuId} handleMobileMenuOpen={handleMobileMenuOpen} renderMobileMenu={renderMobileMenu} renderMenu={renderMenu}></HomeNavbar> */}
+            <HomeNavbar/>
             <Box
                 component="form"
                 sx={{
@@ -195,6 +96,25 @@ function AddPost() {
                 noValidate
                 autoComplete="off"
             >
+                <Box sx={{ minWidth: 120 }}>
+                    <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">看板</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={selectBoard}
+                            label="Age"
+                            onChange={handleChange}
+                        >
+                            {allBoard.map((item,index)=>(
+                                <MenuItem key={index} value={index}>{allBoard[index]}</MenuItem>
+                            ))}
+                            {/* <MenuItem value={10}>Ten</MenuItem> */}
+                            {/* <MenuItem value={20}>Twenty</MenuItem> */}
+                            {/* <MenuItem value={30}>Thirty</MenuItem> */}
+                        </Select>
+                    </FormControl>
+                </Box>
                 <TextField
                     id="outlined-basic"
                     label="標題"
@@ -221,12 +141,26 @@ function AddPost() {
                         id="imageUploadInput"
 
                     />
-                    {imageURL && <img src={imageURL} alt="Uploaded" style={{ width: '40%', marginBottom: '10px' }} />}
-                    <label htmlFor="imageUploadInput">
-                        <Button component="span" variant="contained" startIcon={<CloudUploadIcon />}>
-                            Upload Image
-                        </Button>
-                    </label>
+                    {/*  {imageURL && <img src={imageURL} alt="Uploaded" style={{ width: '40%', marginBottom: '10px' }} />} */}
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        {imageURL && (
+                            <Box sx={{ position: 'relative', width: '40%', marginBottom: '10px' }}>
+                                <img src={imageURL} alt="Uploaded" style={{ width: '100%' }} />
+                                <IconButton
+                                    sx={{ position: 'absolute', top: 0, right: 0, color: 'white' }}
+                                    onClick={() => setImageURL('')}
+                                // 清除預覽照片
+                                >
+                                    <ClearIcon />
+                                </IconButton>
+                            </Box>
+                        )}
+                        <label htmlFor="imageUploadInput">
+                            <Button component="span" variant="contained" startIcon={<CloudUploadIcon />}>
+                                上傳照片
+                            </Button>
+                        </label>
+                    </Box>
 
                 </Box>
                 {/* <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>

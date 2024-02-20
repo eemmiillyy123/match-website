@@ -18,8 +18,10 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CreateIcon from '@mui/icons-material/Create';
 import {  ThemeProvider,  } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
-export default function HomeNavbar({menuId,handleProfileMenuOpen,mobileMenuId,handleMobileMenuOpen,renderMobileMenu,renderMenu}){
+// export default function HomeNavbar({menuId,handleProfileMenuOpen,mobileMenuId,handleMobileMenuOpen,renderMobileMenu,renderMenu}){
+    export default function HomeNavbar(){
     const Search = styled('div')(({ theme }) => ({
         position: 'relative',
         borderRadius: theme.shape.borderRadius,
@@ -59,7 +61,123 @@ export default function HomeNavbar({menuId,handleProfileMenuOpen,mobileMenuId,ha
         },
     },
     }));
-          
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+    const handleProfileMenuOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleMobileMenuClose = () => {
+        setMobileMoreAnchorEl(null);
+    };
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+        handleMobileMenuClose();
+    };
+    const handleMobileMenuOpen = (event) => {
+        setMobileMoreAnchorEl(event.currentTarget);
+    };
+    const navigate=useNavigate();
+    const handlePerson=()=>{
+        navigate('/individual')
+    }
+    const isMenuOpen = Boolean(anchorEl);
+    const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+    const menuId = 'primary-search-account-menu';
+    const renderMenu = (
+        <Menu
+            anchorEl={anchorEl}
+            anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+            }}
+            id={menuId}
+            keepMounted
+            transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+            open={isMenuOpen}
+            onClose={handleMenuClose}
+        >
+            {/* <MenuItem onClick={handleMenuClose}>我的文章</MenuItem>
+            <MenuItem onClick={handleMenuClose}>配對自介</MenuItem>
+            <MenuItem onClick={handleMenuClose}>訊息</MenuItem>
+            <MenuItem onClick={handleMenuClose}>配對</MenuItem>
+            <MenuItem onClick={handleMenuClose}>修改個人資料</MenuItem> */}
+            <MenuItem onClick={handlePerson}>個人</MenuItem> 
+            <MenuItem onClick={handleMenuClose}>登出</MenuItem>
+        </Menu>
+    );
+    const mobileMenuId = 'primary-search-account-menu-mobile';
+    const renderMobileMenu = (
+        <Menu
+            anchorEl={mobileMoreAnchorEl}
+            anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+            id={mobileMenuId}
+            keepMounted
+            transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+            open={isMobileMenuOpen}
+            onClose={handleMobileMenuClose}
+        >
+            <MenuItem>
+                <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+                    <Badge badgeContent={4} color="error">
+                        <PersonAddIcon />
+                    </Badge>
+                </IconButton>
+                <p>Messages</p>
+            </MenuItem>
+            <MenuItem>
+                <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+                    <Badge badgeContent={4} color="error">
+                        <CreateIcon />
+                    </Badge>
+                </IconButton>
+                <p>Messages</p>
+            </MenuItem>
+
+            <MenuItem>
+                <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+                    <Badge badgeContent={4} color="error">
+                        <MailIcon />
+                    </Badge>
+                </IconButton>
+                <p>Messages</p>
+            </MenuItem>
+            <MenuItem>
+                <IconButton
+                    size="large"
+                    aria-label="show 17 new notifications"
+                    color="inherit"
+                >
+                    <Badge badgeContent={17} color="error">
+                        <NotificationsIcon />
+                    </Badge>
+                </IconButton>
+                <p>Notifications</p>
+            </MenuItem>
+            <MenuItem onClick={handleProfileMenuOpen}>
+                <IconButton
+                    size="large"
+                    aria-label="account of current user"
+                    aria-controls="primary-search-account-menu"
+                    aria-haspopup="true"
+                    color="inherit"
+                >
+                    <AccountCircle />
+                </IconButton>
+                <p>Profile</p>
+            </MenuItem>
+        </Menu>
+
+    );
+      
     return (
         <Box sx={{ flexGrow: 1 }}>
                 <AppBar position="static">
