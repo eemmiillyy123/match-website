@@ -1,13 +1,14 @@
-import { AppBar, Button, FormHelperText, IconButton, Input, InputLabel, TextField, Toolbar, Typography } from '@mui/material'
+import { Alert, AppBar, Button, FormHelperText, IconButton, Input, InputLabel, TextField, Toolbar, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import CssBaseline from '@mui/material/CssBaseline'
 import Grid from '@mui/material/Grid'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-import { Search } from 'react-router-dom'
+import { Search, useNavigate } from 'react-router-dom'
 import { FormControl } from '@mui/material';
-import { useState } from 'react'
-import axios from 'axios'
+import { useState } from 'react';
+import axios from 'axios';
+import CheckIcon from '@mui/icons-material/Check';
 
 const theme = createTheme()
 
@@ -15,6 +16,10 @@ function DemoRegister() {
   const [name,setName]=useState('');
   const [email,setEmail]=useState('');
   const [password,setPassword]=useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const navigate = useNavigate();
+
   const handleRegister = () => {
     console.log('regiter');
     (async()=>{
@@ -22,7 +27,7 @@ function DemoRegister() {
       const api=process.env.REACT_APP_BASE_API+"user/register";
       console.log('api',api);
       // const path=process.env.REACT_APP_PATH;
-      const result=await axios.post(api,
+      const response=await axios.post(api,
         {
           username:name,
           email:email,
@@ -35,13 +40,28 @@ function DemoRegister() {
         //   'Access-Control-Allow-Methods':'GET,PUT,POST,DELETE,PATCH,OPTIONS',
         // }}
     );
+    if (response.request.status === 200) {
+      console.log('註冊成功');
+      setShowAlert(true);
+      setTimeout(()=>{
+        navigate('/login');
+      },1000)
+      
+      // <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
+      //   登入成功
+      // </Alert>
+    }
       // const result=await axios.get('https://randomuser.me/api/');
       //前方定義一個變數 再搭配await取得promise結果
-      console.log(result);
+      console.log('response:',response);
       // console.log(param);
     })();
-  
   }
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
   return (
     <ThemeProvider theme={theme}>
       <Box>
@@ -58,6 +78,11 @@ function DemoRegister() {
       </Box>
       <Container component='main' maxWidth='xl'>
         <CssBaseline />
+        {showAlert && (
+              <Alert icon={<CheckIcon fontSize="inherit" />} severity="success" style={{ width: '200px', position: 'fixed', top: 70, left: '50%', marginLeft: '-100px' }}>
+                註冊成功
+              </Alert>
+            )}
         <Box
           sx={{
             marginTop: 8,

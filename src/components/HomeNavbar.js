@@ -108,6 +108,9 @@ import { useNavigate } from 'react-router-dom';
             <MenuItem onClick={handleMenuClose}>登出</MenuItem>
         </Menu>
     );
+    const pathToAddPost = () => {
+        navigate('/addPost');
+    }
     const mobileMenuId = 'primary-search-account-menu-mobile';
     const renderMobileMenu = (
         <Menu
@@ -134,7 +137,7 @@ import { useNavigate } from 'react-router-dom';
                 <p>Messages</p>
             </MenuItem>
             <MenuItem>
-                <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+                <IconButton size="large" aria-label="show 4 new mails" color="inherit" >
                     <Badge badgeContent={4} color="error">
                         <CreateIcon />
                     </Badge>
@@ -214,7 +217,7 @@ import { useNavigate } from 'react-router-dom';
                                 <PersonAddIcon />
                             </Badge>
                         </IconButton>
-                        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+                        <IconButton size="large" aria-label="show 4 new mails" color="inherit" onClick={()=>pathToAddPost()}>
                             <Badge color="error">
                                 <CreateIcon />
                             </Badge>

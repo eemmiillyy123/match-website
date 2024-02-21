@@ -4,6 +4,7 @@ export interface PostListState {
     title: string;
     img:string
     context: string;
+    selectBoard:string
 }
 
 export const listSlice=createSlice({
@@ -13,6 +14,7 @@ export const listSlice=createSlice({
             title: '',
             img:'',
             context: '',
+            selectBoard:''
         }
     ]as PostListState[],
     reducers:{

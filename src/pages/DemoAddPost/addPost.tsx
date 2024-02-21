@@ -55,12 +55,13 @@ function AddPost() {
     //     return state.postList;
     // })
 
-    const handlePost = (title: String, context: String, img: String) => {
+    const handlePost = (title: String, context: String, img: String,selectBoard:string) => {
         console.log('title:', title, ' context:', context, 'img:', img);
         dispatch(createPost({
             title: title,
             img: img,
             context: context,
+            selectBoard:selectBoard
         }))
         setTimeout((posts) => {
             console.log('List of titles:');
@@ -68,7 +69,7 @@ function AddPost() {
             //     console.log(`posts [${index}]: ${item.title},${item.context},${item.img}`);
             // });
             navigate('/home');
-        }, 2000, [{ title, context }]);
+        }, 2000, [{ title, context,selectBoard }]);
     };
 
     //在頁面上進行圖片預覽
@@ -168,7 +169,7 @@ function AddPost() {
                         <VisuallyHiddenInput type=pi />
                     </Button> */}
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <Button variant="contained" color="success" onClick={() => handlePost(title, context, imageURL)}>發布</Button>
+                    <Button variant="contained" color="success" onClick={() => handlePost(title, context, imageURL,allBoard[Number(selectBoard)])}>發布</Button>
                 </Box>
             </Box>
         </ThemeProvider>
