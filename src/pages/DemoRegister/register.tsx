@@ -6,162 +6,191 @@ import Grid from '@mui/material/Grid'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { Search, useNavigate } from 'react-router-dom'
 import { FormControl } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import CheckIcon from '@mui/icons-material/Check';
-
+import { useForm } from 'react-hook-form';
 const theme = createTheme()
 
 function DemoRegister() {
-  const [name,setName]=useState('');
-  const [email,setEmail]=useState('');
-  const [password,setPassword]=useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const navigate = useNavigate();
+  // const handleRegister = () => {
+  //   console.log('regiter');
+  //   (async () => {
+  //     // console.log(process.env.REACT_APP_PATH);//看一下環境變數是否有正常取得
+  //     const api = process.env.REACT_APP_BASE_API + "user/register";
+  //     console.log('api', api);
+  //     // const path=process.env.REACT_APP_PATH;
+  //     const response = await axios.post(api,
+  //       {
+  //         username: name,
+  //         email: email,
+  //         password: password
+  //       }
+  //       // ,{
+  //       // headers: { 
+  //       //   // 'x-apikey': '59a7ad19f5a9fa0808f11931',
+  //       //   'Access-Control-Allow-Origin' : '*',
+  //       //   'Access-Control-Allow-Methods':'GET,PUT,POST,DELETE,PATCH,OPTIONS',
+  //       // }}
+  //     );
+  //     if (response.request.status === 201) {
+  //       console.log('註冊成功，即將前往登入頁面');
+  //       setShowAlert(true);
+  //       setTimeout(() => {
+  //         navigate('/login');
+  //       }, 3000)
+  //     }
+  //     console.log('response:', response);
+  //   })();
 
-  const handleRegister = () => {
-    console.log('regiter');
-    (async()=>{
-      // console.log(process.env.REACT_APP_PATH);//看一下環境變數是否有正常取得
-      const api=process.env.REACT_APP_BASE_API+"user/register";
-      console.log('api',api);
-      // const path=process.env.REACT_APP_PATH;
-      const response=await axios.post(api,
+  // }
+  // const handleClickShowPassword = () => setShowPassword((show) => !show);
+  // const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+  //   event.preventDefault();
+  // };
+
+  const { register, handleSubmit, formState: { errors }, watch } = useForm();
+
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      // console.log('value:', value, 'name:', name);
+      setName(value.username);
+      setEmail(value.email);
+      setPassword(value.password);
+    })
+    //在useEfect如果有監聽的行為要補上取消監聽行為避免重複觸發
+    console.log(subscription);//裡面有一個unsubscribe:取消訂閱(監聽)
+    return () => { subscription.unsubscribe() }
+  }, [watch])
+
+  const onSubmit = (data: any) => {
+    (async () => {
+      const api = process.env.REACT_APP_BASE_API + "user/register";
+      const response = await axios.post(api,
         {
-          username:name,
-          email:email,
-          password:password
+          username: name,
+          email: email,
+          password: password
         }
-        // ,{
-        // headers: { 
-        //   // 'x-apikey': '59a7ad19f5a9fa0808f11931',
-        //   'Access-Control-Allow-Origin' : '*',
-        //   'Access-Control-Allow-Methods':'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-        // }}
-    );
-    if (response.request.status === 200) {
-      console.log('註冊成功');
-      setShowAlert(true);
-      setTimeout(()=>{
-        navigate('/login');
-      },1000)
-      
-      // <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-      //   登入成功
-      // </Alert>
-    }
+      );
+      if (response.request.status === 201) {
+        console.log('註冊成功，即將前往登入頁面');
+        setShowAlert(true);
+        setTimeout(() => {
+          navigate('/login');
+        }, 3000)
+      }
       // const result=await axios.get('https://randomuser.me/api/');
       //前方定義一個變數 再搭配await取得promise結果
-      console.log('response:',response);
-      // console.log(param);
+      console.log('response:', response);
     })();
-  }
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
   };
   return (
     <ThemeProvider theme={theme}>
       <Box>
         <AppBar position="static">
           <Toolbar>
-            {/* sx = {flexGrow: 1} allows us to set all content at right except typography */}
             <Typography variant="h4" sx={{ flexGrow: 1 }}>
               AppBar
             </Typography>
-            {/* <Button color="inherit" onClick={handleRegister}> 註冊 </Button>
-            <Button color="inherit"> 登入 </Button> */}
           </Toolbar>
         </AppBar>
       </Box>
-      <Container component='main' maxWidth='xl'>
-        <CssBaseline />
-        {showAlert && (
-              <Alert icon={<CheckIcon fontSize="inherit" />} severity="success" style={{ width: '200px', position: 'fixed', top: 70, left: '50%', marginLeft: '-100px' }}>
-                註冊成功
-              </Alert>
-            )}
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          {/* <Box component='form' noValidate sx={{ mt: 3 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={12}>
-                <h1>Hello</h1>
-              </Grid>
+      {/* <Container > */}
+      <CssBaseline />
+      {showAlert && (
+        <Alert icon={<CheckIcon fontSize="inherit" />} severity="success" style={{ width: '300px', position: 'fixed', top: '15%', left: '50%', marginLeft: '-100px' }}>
+          註冊成功，即將前往登入頁面
+        </Alert>
+      )}
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%', maxWidth: '400px' }}>
+          {/* <FormControl> */}
+          {/* <form action='' onSubmit={handleSubmit(onSubmit)}> */}
+          <Grid container direction="column" spacing={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Grid item xs={12} sx={{ textAlign: 'center' }}>
+              <p>已經有帳號了嗎? <a href="/demo/login">登入</a></p>
             </Grid>
-          </Box> */}
-          <FormControl>
-            <Grid container direction="column"  spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  type="text"
-                  variant='outlined'
-                  label="使用者名稱"
-                  size="small"
-                  // console.log(e)
-                  onChange={e=>setName(e.target.value)}
-                  value={name}
-                  required
-                />
-                {/* {name} */}
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  type="text"
-                  variant='outlined'
-                  label="信箱"
-                  size="small"
-                  onChange={e=>setEmail(e.target.value)}
-                  value={email}
-                  required
-                />
-              </Grid>
-              {/* {email} */}
-              <Grid item xs={12}>
-                <TextField
-                  type="password"
-                  variant='outlined'
-                  label="密碼"
-                  size="small"
-                  onChange={e=>setPassword(e.target.value)}
-                  value={password}
-                  required
-                />
-              </Grid>
-              {/* {password} */}
-              <Grid item xs={12} sx={{ textAlign: 'right' }}>
-                <Button variant="contained" size="small" onClick={()=>handleRegister()}>註冊</Button>
-              </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                type="text"
+                variant='outlined'
+                label="使用者名稱"
+                size="small"
+                {...register('username', { required: true })}
+                error={!!errors.username}
+                helperText={errors.username ? '使用者名稱為必填' : ''}
+              // onChange={e => setName(e.target.value)}
+              // value={name}
+              // required
+              />
             </Grid>
-          
-            {/* <TextField
-              type="text"
-              variant='outlined'
-              // color='secondary'
-              label="使用者名稱"
-              // onChange={e => setFirstName(e.target.value)}
-              // value={firstName}
-              size="small"
-              // fullWidth
-              required
-            />
-            <Grid container justifyContent="flex-end" className='MuiGrid-spacing-xs-10'>
-              <Button variant="contained" className="text-right" size="small">註冊</Button>
-            </Grid> */}
-          </FormControl>
-        </Box>
-        
-      </Container>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                type="text"
+                variant='outlined'
+                label="信箱"
+                size="small"
+                {...register('email', {
+                  required: {
+                    value: true,
+                    message: '信箱為必填'
+                  },
+                  pattern: {
+                    value: /^\S+@\S+$/i,
+                    message: '信箱格式不正確'
+                  }
+                })}
+                error={!!errors.email}
+                helperText={errors.email ? (errors.email.message as string | undefined) : ''}
+              // onChange={e => setEmail(e.target.value)}
+              // value={email}
+              // required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                type="password"
+                variant='outlined'
+                label="密碼"
+                size="small"
+                {...register('password', {
+                  required: {
+                    value: true,
+                    message: '密碼為必填'
+                  },
+                  minLength: {
+                    value: 6,
+                    message: '密碼不少於 6 碼',
+                  },
+                  maxLength: {
+                    value: 12,
+                    message: '密碼不大於 12 碼',
+                  }
+                })}
+                error={!!errors.password}
+                helperText={errors.password ? (errors.password.message as string | undefined) : ''}
+              // onChange={e => setPassword(e.target.value)}
+              // value={password}
+              // required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              {/* <Button variant="contained" size="small" onClick={() => handleRegister()}>註冊</Button> */}
+              <Button variant="contained" size="small" type="submit">註冊</Button>
+            </Grid>
+          </Grid>
+        </form>
+        {/* </FormControl> */}
+      </div>
+      {/* </Container> */}
     </ThemeProvider>
   )
 }
-
-export default DemoRegister
+export default DemoRegister;
