@@ -80,7 +80,7 @@ function PrimarySearchAppBar() {
         <ThemeProvider theme={theme}>
             <HomeNavbar/>
             {/* <HomeNavbar menuId={menuId} handleProfileMenuOpen={handleProfileMenuOpen} mobileMenuId={mobileMenuId} handleMobileMenuOpen={handleMobileMenuOpen} renderMobileMenu={renderMobileMenu} renderMenu={renderMenu}></HomeNavbar> */}
-            {/* <Box sx={{ flexGrow: 1 }}>
+             {/* <Box sx={{ flexGrow: 1 }}>
                 <AppBar position="static">
                     <Toolbar>
                         <IconButton
@@ -163,8 +163,8 @@ function PrimarySearchAppBar() {
                     </Toolbar>
                 </AppBar>
                 {renderMobileMenu}
-                {renderMenu}
-                {/* 渲染抽屉菜单 */}
+                {renderMenu} */}
+                {/* 渲染抽屉菜单
                 <Drawer
                     variant="temporary"
                     anchor="left"
@@ -172,7 +172,7 @@ function PrimarySearchAppBar() {
                     onClose={handleDrawerToggle}
                 >
                     {drawer}
-                </Drawer>
+                </Drawer> */}
             {/* </Box> */}
             {/* 檢查 postList 是否為空， title和context都不能為空 */}
             <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>

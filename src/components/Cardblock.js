@@ -213,8 +213,8 @@ export default function Cardblock({ list }) {
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                   {modal.context}
-                  {modal.img && <img src={modal.img} alt='img' style={{ maxWidth: '50%', maxHeight: '50%' }}></img>}
                 </Typography> 
+                  {modal.img && <img src={modal.img} alt='img' style={{ maxWidth: '50%', maxHeight: '50%' }}></img>}
            </div> 
           )} 
          </Box>

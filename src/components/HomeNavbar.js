@@ -19,9 +19,50 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CreateIcon from '@mui/icons-material/Create';
 import {  ThemeProvider,  } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import HomeIcon from '@mui/icons-material/Home';
+import InfoIcon from '@mui/icons-material/Info';
+import ContactIcon from '@mui/icons-material/ContactSupport';
+import { Container, Divider, Drawer} from '@mui/material';
 // export default function HomeNavbar({menuId,handleProfileMenuOpen,mobileMenuId,handleMobileMenuOpen,renderMobileMenu,renderMenu}){
     export default function HomeNavbar(){
+         // Drawer
+    const [mobileOpen, setMobileOpen] = React.useState(false);
+    const handleDrawerToggle = () => {
+        setMobileOpen(!mobileOpen);
+    };
+    const drawer = (
+        <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
+            <Typography variant="h6" sx={{ my: 2 }}>
+                所有看板
+            </Typography>
+            <Divider />
+            <List>
+                <ListItem button>
+                    <ListItemIcon>
+                        <HomeIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="音樂看板" />
+                </ListItem>
+                <ListItem button>
+                    <ListItemIcon>
+                        <InfoIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="星座看板" />
+                </ListItem>
+                <ListItem button>
+                    <ListItemIcon>
+                        <ContactIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="NEC員工專屬看板" />
+                </ListItem>
+            </List>
+        </Box>
+    );
+
     const Search = styled('div')(({ theme }) => ({
         position: 'relative',
         borderRadius: theme.shape.borderRadius,
@@ -190,6 +231,7 @@ import { useNavigate } from 'react-router-dom';
                         edge="start"
                         color="inherit"
                         aria-label="open drawer"
+                        onClick={handleDrawerToggle}
                         sx={{ mr: 2 }}
                     >
                         <MenuIcon />
@@ -264,6 +306,15 @@ import { useNavigate } from 'react-router-dom';
             </AppBar>
             {renderMobileMenu}
             {renderMenu}
+            {/* 渲染抽屉菜单 */}
+                <Drawer
+                    variant="temporary"
+                    anchor="left"
+                    open={mobileOpen}
+                    onClose={handleDrawerToggle}
+                >
+                    {drawer}
+                </Drawer>
         </Box>
     );
 }
