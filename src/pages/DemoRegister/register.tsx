@@ -93,23 +93,25 @@ function DemoRegister() {
   };
   return (
     <ThemeProvider theme={theme}>
-      <Box>
-        <AppBar position="static">
-          <Toolbar>
-            <Typography variant="h4" sx={{ flexGrow: 1 }}>
-              AppBar
-            </Typography>
-          </Toolbar>
-        </AppBar>
-      </Box>
-      {/* <Container > */}
-      <CssBaseline />
-      {showAlert && (
-        <Alert icon={<CheckIcon fontSize="inherit" />} severity="success" style={{ width: '300px', position: 'fixed', top: '15%', left: '50%', marginLeft: '-100px' }}>
-          註冊成功，即將前往登入頁面
-        </Alert>
-      )}
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h4" sx={{ flexGrow: 1 }}>
+            AppBar
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Box
+        height='90vh'
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <CssBaseline />
+        {showAlert && (
+          <Alert icon={<CheckIcon fontSize="inherit" />} severity="success" style={{ width: '300px', position: 'fixed', top: '15%', left: '50%', marginLeft: '-100px' }}>
+            註冊成功，即將前往登入頁面
+          </Alert>
+        )}
         <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%', maxWidth: '400px' }}>
           {/* <FormControl> */}
           {/* <form action='' onSubmit={handleSubmit(onSubmit)}> */}
@@ -188,8 +190,7 @@ function DemoRegister() {
           </Grid>
         </form>
         {/* </FormControl> */}
-      </div>
-      {/* </Container> */}
+      </Box>
     </ThemeProvider>
   )
 }

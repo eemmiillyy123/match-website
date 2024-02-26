@@ -71,10 +71,8 @@ function DemoLogin() {
   }
   return (
     <ThemeProvider theme={theme}>
-      <Box>
-        <AppBar position="static">
+       <AppBar position="static">
           <Toolbar>
-            {/* sx = {flexGrow: 1} allows us to set all content at right except typography */}
             <Typography variant="h4" sx={{ flexGrow: 1 }}>
               AppBar
             </Typography>
@@ -83,93 +81,105 @@ function DemoLogin() {
                <Button color = "inherit"> 登入 </Button> */}
           </Toolbar>
         </AppBar>
-      </Box>
-
-      <Container component='main' maxWidth='xl'>
         <CssBaseline />
         {showAlert && (
           <Alert icon={<CheckIcon fontSize="inherit" />} severity="success" style={{ width: '200px', position: 'fixed', top: 70, left: '50%', marginLeft: '-100px' }}>
             登入成功
           </Alert>
         )}
-        {/* <Box
-          sx={{
-            marginTop: '50%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center'
-          }} 
-        >*/}
-
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%', maxWidth: '400px' }}>
-            {/* <FormControl> */}
-            <Grid container direction="column" spacing={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <Grid item xs={12} sx={{ textAlign: 'center' }}>
-                <p>還沒有帳號嗎? <a href="/demo/register">註冊</a></p>
+        <Box
+      height='90vh'
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <form onSubmit={handleSubmit(onSubmit)} style={{maxWidth: '400px' }}>
+              {/* <FormControl> */}
+              <Grid container direction="column" spacing={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                  <p>還沒有帳號嗎? <a href="/demo/register">註冊</a></p>
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                <FormControl sx={{ width: '100%' }}>
+                  <TextField
+                    type="text"
+                    variant='outlined'
+                    label="信箱"
+                    size="small"
+                    {...register('email', {
+                      required: {
+                        value: true,
+                        message: '信箱為必填'
+                      },
+                      pattern: {
+                        value: /^\S+@\S+$/i,
+                        message: '信箱格式不正確'
+                      }
+                    })}
+                    error={!!errors.email}
+                    helperText={errors.email ? (errors.email.message as string | undefined) : ''}
+                    // sx={{ width: '100%' }}
+                    // sx={{ width: 'calc(100% + 48px)' }}
+                    // onChange={(e) => setEmail(e.target.value)}
+                    // value={email}
+                    // required
+                    />
+                    </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                <FormControl  sx={{ width: '100%' }}>
+                  <TextField
+                    // type="password"
+                    type={showPassword ? 'text' : 'password'}
+                    variant='outlined'
+                    label="密碼"
+                    size="small"
+                    {...register('password', {
+                      required: {
+                        value: true,
+                        message: '密碼為必填'
+                      },
+                      minLength: {
+                        value: 6,
+                        message: '密碼不少於 6 碼',
+                      },
+                      maxLength: {
+                        value: 12,
+                        message: '密碼不大於 12 碼',
+                      }
+                    })}
+                    error={!!errors.password}
+                    helperText={errors.password ? (errors.password.message as string | undefined) : ''}
+                    sx={{ width: '100%' }}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end"  sx={{ margin: 0 }}>
+                          <IconButton
+                            onClick={() => setShowPassword(!showPassword)} // 點擊切換顯示/隱藏密碼
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      )
+                    }}
+                    // onChange={(e) => setPassword(e.target.value)}
+                    // value={password}
+                    // required
+                  />
+</FormControl>
+                </Grid>
+                <Grid item xs={12} sx={{ textAlign: 'right' }}>
+                  {/* <Button variant="contained" size="small" onClick={() => handleLogin()}>登入</Button> */}
+                  <Button variant="contained" size="small" type="submit">登入</Button>
+                </Grid>
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  type="text"
-                  variant='outlined'
-                  label="信箱"
-                  size="small"
-                  {...register('email', {
-                    required: {
-                      value: true,
-                      message: '信箱為必填'
-                    },
-                    pattern: {
-                      value: /^\S+@\S+$/i,
-                      message: '信箱格式不正確'
-                    }
-                  })}
-                  error={!!errors.email}
-                  helperText={errors.email ? (errors.email.message as string | undefined) : ''}
-                  // onChange={(e) => setEmail(e.target.value)}
-                  // value={email}
-                  // required
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  type="password"
-                  variant='outlined'
-                  label="密碼"
-                  size="small"
-                  {...register('password', {
-                    required: {
-                      value: true,
-                      message: '密碼為必填'
-                    },
-                    minLength: {
-                      value: 6,
-                      message: '密碼不少於 6 碼',
-                    },
-                    maxLength: {
-                      value: 12,
-                      message: '密碼不大於 12 碼',
-                    }
-                  })}
-                  error={!!errors.password}
-                  helperText={errors.password ? (errors.password.message as string | undefined) : ''}
-                  // onChange={(e) => setPassword(e.target.value)}
-                  // value={password}
-                  // required
-                />
-
-              </Grid>
-              <Grid item xs={12} sx={{ textAlign: 'right' }}>
-                {/* <Button variant="contained" size="small" onClick={() => handleLogin()}>登入</Button> */}
-                <Button variant="contained" size="small" type="submit">登入</Button>
-              </Grid>
-            </Grid>
-            </form>
-            </div>
-          {/* </FormControl> */}
-        {/* </Box> */}
-
-      </Container>
+              </form>
+       
+              {/* </div> */}
+            {/* </FormControl> */}
+          {/* </Box> */}
+      </Box>   
     </ThemeProvider>
   )
 }
