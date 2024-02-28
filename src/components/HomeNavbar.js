@@ -27,6 +27,46 @@ import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
 import ContactIcon from '@mui/icons-material/ContactSupport';
 import { Container, Divider, Drawer} from '@mui/material';
+import axios from 'axios';
+const Search = styled('div')(({ theme }) => ({
+    position: 'relative',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: alpha(theme.palette.common.white, 0.15),
+    '&:hover': {
+      backgroundColor: alpha(theme.palette.common.white, 0.25),
+    },
+    marginRight: theme.spacing(2),
+    marginLeft: 0,
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+      marginLeft: theme.spacing(3),
+      width: 'auto',
+    },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+padding: theme.spacing(0, 2),
+height: '100%',
+position: 'absolute',
+pointerEvents: 'none',
+display: 'flex',
+alignItems: 'center',
+justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+color: 'inherit',
+'& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+    width: '20ch',
+    },
+},
+}));
 // export default function HomeNavbar({menuId,handleProfileMenuOpen,mobileMenuId,handleMobileMenuOpen,renderMobileMenu,renderMenu}){
     export default function HomeNavbar(){
          // Drawer
@@ -34,6 +74,41 @@ import { Container, Divider, Drawer} from '@mui/material';
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
+    const [searchtext,setSearchtext]=React.useState("");
+    const handleInputChange= (event) => {
+        setSearchtext(event.target.value);
+      };
+    const handleBoard=(s)=>{
+        (async () => {
+            try{
+                console.log("s:",s);
+                const api = process.env.REACT_APP_BASE_API + "selectPost/?board="+s;
+                console.log(api);
+                const response = await axios.get(api);
+                console.log(response);
+                if (response.request.status === 200) {
+                    console.log('成功');
+                // //   setShowAlert(true);
+                // //   localStorage.setItem('email:', email);
+                //   setTimeout(() => {
+                    navigate('/selectPost?board='+s);
+                //   }, 1000)
+                }
+            }catch(error){
+                // setErrorAlert(true);
+                // setTimeout(() => {
+                //   window.location.reload(); // 登入失敗後 2 秒重新加載頁面
+                // }, 2000);
+            }
+        })()
+    }
+    const handleKeyDown = (event) => {
+        if (event.keyCode === 13) {
+            navigate('/selectPost?search='+searchtext);
+        //   // 在這裡處理 Enter 鍵被按下的情況
+        //   console.log('Enter 鍵被按下');
+        }
+      };
     const drawer = (
         <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
             <Typography variant="h6" sx={{ my: 2 }}>
@@ -41,19 +116,19 @@ import { Container, Divider, Drawer} from '@mui/material';
             </Typography>
             <Divider />
             <List>
-                <ListItem button>
+                <ListItem button onClick={()=>handleBoard("音樂看板")}>
                     <ListItemIcon>
                         <HomeIcon />
                     </ListItemIcon>
                     <ListItemText primary="音樂看板" />
                 </ListItem>
-                <ListItem button>
+                <ListItem button onClick={()=>handleBoard("星座看板")}>
                     <ListItemIcon>
                         <InfoIcon />
                     </ListItemIcon>
                     <ListItemText primary="星座看板" />
                 </ListItem>
-                <ListItem button>
+                <ListItem button onClick={()=>handleBoard("NEC員工專屬看板")}>
                     <ListItemIcon>
                         <ContactIcon />
                     </ListItemIcon>
@@ -63,45 +138,8 @@ import { Container, Divider, Drawer} from '@mui/material';
         </Box>
     );
 
-    const Search = styled('div')(({ theme }) => ({
-        position: 'relative',
-        borderRadius: theme.shape.borderRadius,
-        backgroundColor: alpha(theme.palette.common.white, 0.15),
-        '&:hover': {
-          backgroundColor: alpha(theme.palette.common.white, 0.25),
-        },
-        marginRight: theme.spacing(2),
-        marginLeft: 0,
-        width: '100%',
-        [theme.breakpoints.up('sm')]: {
-          marginLeft: theme.spacing(3),
-          width: 'auto',
-        },
-    }));
     
-    const SearchIconWrapper = styled('div')(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    }));
-    
-    const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: 'inherit',
-    '& .MuiInputBase-input': {
-        padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
-        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-        transition: theme.transitions.create('width'),
-        width: '100%',
-        [theme.breakpoints.up('md')]: {
-        width: '20ch',
-        },
-    },
-    }));
+    const navigate=useNavigate();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     const handleProfileMenuOpen = (event) => {
@@ -111,15 +149,17 @@ import { Container, Divider, Drawer} from '@mui/material';
         setMobileMoreAnchorEl(null);
     };
     const handleMenuClose = () => {
-        setAnchorEl(null);
-        handleMobileMenuClose();
+        localStorage.setItem('email:', "");
+        navigate('/login')
     };
     const handleMobileMenuOpen = (event) => {
         setMobileMoreAnchorEl(event.currentTarget);
     };
-    const navigate=useNavigate();
     const handlePerson=()=>{
         navigate('/individual')
+    }
+    const handlePageToHome=()=>{
+        navigate('/home')
     }
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -240,9 +280,10 @@ import { Container, Divider, Drawer} from '@mui/material';
                         variant="h6"
                         noWrap
                         component="div"
-                        sx={{ display: { xs: 'none', sm: 'block' } }}
+                        sx={{ display: { xs: 'none', sm: 'block' }}}
+                        onClick={handlePageToHome}
                     >
-                        MUI
+                        首頁
                     </Typography>
                     <Search>
                         <SearchIconWrapper>
@@ -250,7 +291,10 @@ import { Container, Divider, Drawer} from '@mui/material';
                         </SearchIconWrapper>
                         <StyledInputBase
                             placeholder="Search…"
-                            inputProps={{ 'aria-label': 'search' }} />
+                            inputProps={{ 'aria-label': 'search' }} 
+                            value={searchtext}
+              onChange={handleInputChange}
+                            onKeyDown={handleKeyDown}/>
                     </Search>
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>

@@ -83,7 +83,7 @@ export default function Cardblock({ list }) {
               <CardContent style={{ paddingTop: '0px', paddingBottom: '0px', display: 'flex', justifyContent: 'space-between' }}>
                 <Box>
                   <Typography variant="caption" display="block" gutterBottom>
-                    {item.selectBoard}
+                    {item.board}
                     <br />
                     {new Date().toLocaleString(undefined, { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })}
                   </Typography>

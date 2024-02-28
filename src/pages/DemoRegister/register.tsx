@@ -1,4 +1,4 @@
-import { Alert, AppBar, Button, FormHelperText, IconButton, Input, InputLabel, TextField, Toolbar, Typography } from '@mui/material'
+import { Alert, AppBar, Button, FormHelperText, IconButton, Input, InputAdornment, InputLabel, OutlinedInput, TextField, Toolbar, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import CheckIcon from '@mui/icons-material/Check';
 import { useForm } from 'react-hook-form';
+import { Visibility, VisibilityOff } from '@mui/icons-material'
 const theme = createTheme()
 
 function DemoRegister() {
@@ -18,6 +19,7 @@ function DemoRegister() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [errorAlert, setErrorAlert] = useState(false);
   const navigate = useNavigate();
   // const handleRegister = () => {
   //   console.log('regiter');
@@ -54,7 +56,11 @@ function DemoRegister() {
   // const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
   //   event.preventDefault();
   // };
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
 
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
   const { register, handleSubmit, formState: { errors }, watch } = useForm();
 
   useEffect(() => {
@@ -72,23 +78,25 @@ function DemoRegister() {
   const onSubmit = (data: any) => {
     (async () => {
       const api = process.env.REACT_APP_BASE_API + "user/register";
-      const response = await axios.post(api,
-        {
-          username: name,
-          email: email,
-          password: password
+      try{
+        const response = await axios.post(api,
+          {
+            username: name,
+            email: email,
+            password: password
+          }
+        );
+        if (response.request.status === 201) {
+          console.log('註冊成功，即將前往登入頁面');
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate('/login');
+          }, 3000)
         }
-      );
-      if (response.request.status === 201) {
-        console.log('註冊成功，即將前往登入頁面');
-        setShowAlert(true);
-        setTimeout(() => {
-          navigate('/login');
-        }, 3000)
+        console.log(response);
+      }catch(error){
+        setErrorAlert(true);
       }
-      // const result=await axios.get('https://randomuser.me/api/');
-      //前方定義一個變數 再搭配await取得promise結果
-      console.log('response:', response);
     })();
   };
   return (
@@ -110,6 +118,11 @@ function DemoRegister() {
         {showAlert && (
           <Alert icon={<CheckIcon fontSize="inherit" />} severity="success" style={{ width: '300px', position: 'fixed', top: '15%', left: '50%', marginLeft: '-100px' }}>
             註冊成功，即將前往登入頁面
+          </Alert>
+        )}
+         {errorAlert && (
+          <Alert severity="error" style={{ width: '300px', position: 'fixed', top: '15%', left: '50%', marginLeft: '-100px' }}>
+            註冊失敗，請再試一次。
           </Alert>
         )}
         <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%', maxWidth: '400px' }}>
@@ -157,7 +170,51 @@ function DemoRegister() {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <FormControl sx={{ width: '25ch' }} variant="outlined" size='small'>
+                <InputLabel htmlFor="outlined-adornment-password">密碼</InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-password"
+                  type={showPassword ? 'text' : 'password'}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  label="密碼"
+                  {...register('password', {
+                    required: {
+                      value: true,
+                      message: '密碼為必填'
+                    },
+                    minLength: {
+                      value: 6,
+                      message: '密碼不少於 6 碼',
+                    },
+                    maxLength: {
+                      value: 12,
+                      message: '密碼不大於 12 碼',
+                    }
+                  })}
+                  error={!!errors.password}
+                // helperText={errors.password ? (errors.password.message as string | undefined) : ''}
+
+                />
+                {/* {errors.password && <span>{errors.password.message as string}</span>} */}
+                {/* {errors.password ? (errors.password.message as string | undefined) : ''} */}
+                {errors.password && (
+                  <Typography variant="body2" color="error" sx={{ marginTop: '4px', marginX: '14px', fontSize: '0.75rem' }}>
+                    {errors.password && <span>{errors.password.message as string}</span>}
+                  </Typography>
+                )}
+              </FormControl>
+              {/* <TextField
                 type="password"
                 variant='outlined'
                 label="密碼"
@@ -181,7 +238,54 @@ function DemoRegister() {
               // onChange={e => setPassword(e.target.value)}
               // value={password}
               // required
-              />
+              /> */}
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl sx={{ width: '25ch' }} variant="outlined" size='small'>
+                  <InputLabel htmlFor="outlined-adornment-password">再次輸入密碼</InputLabel>
+                  <OutlinedInput
+                    id="outlined-adornment-password"
+                    type={showPassword ? 'text' : 'password'}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                    label="再次輸入密碼"
+                    {...register('confirmPassword', {
+                      required: {
+                        value: true,
+                        message: '再次輸入密碼為必填'
+                      },
+                      minLength: {
+                        value: 6,
+                        message: '再次輸入密碼不少於 6 碼',
+                      },
+                      maxLength: {
+                        value: 12,
+                        message: '再次輸入密碼不大於 12 碼',
+                      },
+                      validate: (value) => value === password || '密碼和再次輸入密碼需一致'
+                    })}
+                    error={!!errors.confirmPassword} 
+                  // helperText={errors.password ? (errors.password.message as string | undefined) : ''}
+
+                  />
+                  {/* {errors.password && <span>{errors.password.message as string}</span>} */}
+                  {/* {errors.password ? (errors.password.message as string | undefined) : ''} */}
+                  {errors.confirmPassword && (
+                    <Typography variant="body2" color="error" sx={{ marginTop: '4px', marginX: '14px', fontSize: '0.75rem' }}>
+                      {errors.confirmPassword && <span>{errors.confirmPassword.message as string}</span>}
+                    </Typography>
+                  )}
+              </FormControl>
             </Grid>
             <Grid item xs={12}>
               {/* <Button variant="contained" size="small" onClick={() => handleRegister()}>註冊</Button> */}

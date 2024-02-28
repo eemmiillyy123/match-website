@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { PostListState, createPost } from '../../slice/listSlice';
 import ClearIcon from '@mui/icons-material/Clear';
 import FormControl from '@mui/material/FormControl';
+import axios from 'axios';
 
 const theme = createTheme();
 const VisuallyHiddenInput = styled('input')({
@@ -56,20 +57,43 @@ function AddPost() {
     // })
 
     const handlePost = (title: String, context: String, img: String,selectBoard:string) => {
-        console.log('title:', title, ' context:', context, 'img:', img);
-        dispatch(createPost({
-            title: title,
-            img: img,
-            context: context,
-            selectBoard:selectBoard
-        }))
-        setTimeout((posts) => {
-            console.log('List of titles:');
-            // posts.forEach((item, index) => {
-            //     console.log(`posts [${index}]: ${item.title},${item.context},${item.img}`);
-            // });
-            navigate('/home');
-        }, 2000, [{ title, context,selectBoard }]);
+        // console.log('title:', title, ' context:', context, 'img:', img);
+        (async () => {
+            try{
+              const api = process.env.REACT_APP_BASE_API + "addpost";
+              console.log(api);
+              const response = await axios.post(api, {
+                email: localStorage.getItem("email:"),
+                board: selectBoard,
+                title:title,
+                context:context,
+                img:imageURL
+              })
+              if (response.request.status === 200) {
+                setTimeout(() => {
+                  navigate('/home');
+                }, 3000)
+              }
+            }catch(error){
+                console.error("home頁面錯誤");
+            //   setTimeout(() => {
+            //     window.location.reload(); // 登入失敗後 2 秒重新加載頁面
+            //   }, 2000);
+            }
+        })()
+        // dispatch(createPost({
+        //     title: title,
+        //     img: img,
+        //     context: context,
+        //     selectBoard:selectBoard
+        // }))
+        // setTimeout((posts) => {
+        //     console.log('List of titles:');
+        //     // posts.forEach((item, index) => {
+        //     //     console.log(`posts [${index}]: ${item.title},${item.context},${item.img}`);
+        //     // });
+        //     navigate('/home');
+        // }, 2000, [{ title, context,selectBoard }]);
     };
 
     //在頁面上進行圖片預覽

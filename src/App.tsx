@@ -7,6 +7,7 @@ import DemoIndex from "./pages/DemoIndex";
 import DemoHome from "./pages/DemoHome/home";
 import DemoAddPost from "./pages/DemoAddPost/addPost";
 import Individual from "./pages/Individual/individual";
+import PostByBoard from "./pages/PostByBoard/selectPostByBoard";
 // import { Individual } from "./pages/Individual/individual";
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/addPost" element={<DemoAddPost />} />
         <Route path="/individual" element={<Individual />} />
         <Route path="/accessDenied" element={<AccessDenied />} />
+        <Route path="/selectPost" element={<PostByBoard />} />
       </Routes>
     </div>
   );

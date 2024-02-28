@@ -31,7 +31,8 @@ import ListItemText from '@mui/material/ListItemText';
 import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
 import ContactIcon from '@mui/icons-material/ContactSupport';
-
+import axios from 'axios';
+import { useEffect} from 'react'
 const theme = createTheme();
 function PrimarySearchAppBar() {
     // Drawer
@@ -39,42 +40,69 @@ function PrimarySearchAppBar() {
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
-    const drawer = (
-        <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-            <Typography variant="h6" sx={{ my: 2 }}>
-                所有看板
-            </Typography>
-            <Divider />
-            <List>
-                <ListItem button>
-                    <ListItemIcon>
-                        <HomeIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="音樂看板" />
-                </ListItem>
-                <ListItem button>
-                    <ListItemIcon>
-                        <InfoIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="星座看板" />
-                </ListItem>
-                <ListItem button>
-                    <ListItemIcon>
-                        <ContactIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="NEC員工專屬看板" />
-                </ListItem>
-            </List>
-        </Box>
-    );
+    const handleBoard=(s:String)=>{
+
+    }
+    // const drawer = (
+    //     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
+    //         <Typography variant="h6" sx={{ my: 2 }}>
+    //             所有看板
+    //         </Typography>
+    //         <Divider />
+    //         <List>
+    //             <ListItem button onClick={()=>handleBoard("音樂看板")}>
+    //                 <ListItemIcon>
+    //                     <HomeIcon />
+    //                 </ListItemIcon>
+    //                 <ListItemText primary="音樂看板" />
+    //             </ListItem>
+    //             <ListItem button>
+    //                 <ListItemIcon>
+    //                     <InfoIcon />
+    //                 </ListItemIcon>
+    //                 <ListItemText primary="星座看板" />
+    //             </ListItem>
+    //             <ListItem button>
+    //                 <ListItemIcon>
+    //                     <ContactIcon />
+    //                 </ListItemIcon>
+    //                 <ListItemText primary="NEC員工專屬看板" />
+    //             </ListItem>
+    //         </List>
+    //     </Box>
+    // );
+    const [list, setList] = React.useState({});
 
     //AppBar
     const navigate = useNavigate();
     const pathToAddPost = () => {
         navigate('/addPost');
     }
-
-    const postList = useSelector((state: { postList: PostListState[] }) => state.postList);
+    useEffect(() => {
+    (async () => {
+        try{
+          const api = process.env.REACT_APP_BASE_API + "getposts";
+          const response = await axios.get(api);
+          console.log(response.data);
+          setList(response.data);
+          
+        //   list=response.data;
+        //   if (response.request.status === 200) {
+        //     setTimeout(() => {
+        //       navigate('/home');
+        //     }, 3000)
+        //   }
+        }catch(error){
+        //   setErrorAlert(true);
+        //   setTimeout(() => {
+        //     window.location.reload(); // 登入失敗後 2 秒重新加載頁面
+        //   }, 2000);
+        }
+        
+      })()
+    }, [])
+    console.log("list",list);
+    // const postList = useSelector((state: { postList: PostListState[] }) => state.postList);
    
     return (
         <ThemeProvider theme={theme}>
@@ -174,10 +202,12 @@ function PrimarySearchAppBar() {
                     {drawer}
                 </Drawer> */}
             {/* </Box> */}
-            {/* 檢查 postList 是否為空， title和context都不能為空 */}
+             {/* 檢查 postList 是否為空， title和context都不能為空 */}
             <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                <Cardblock list={postList.filter(item => item.title !== '' && item.context !== '')} />
-            </Box>
+                {/* <Cardblock list={list.filter(item:any => item.title !== '' && item.context !== '')} /> */}
+                <Cardblock list={list}/>
+            </Box> 
+            
             {/* 新增貼文的加號按鈕 */}
             <Box sx={{ '& > :not(style)': { m: 1 }, position: 'fixed', bottom: 30, right: 20 }}>
                 <Fab color="primary" aria-label="add" onClick={() => pathToAddPost()}>
