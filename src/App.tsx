@@ -8,7 +8,9 @@ import DemoHome from "./pages/DemoHome/home";
 import DemoAddPost from "./pages/DemoAddPost/addPost";
 import Individual from "./pages/Individual/individual";
 import PostByBoard from "./pages/PostByBoard/selectPostByBoard";
-// import { Individual } from "./pages/Individual/individual";
+import Match from "./pages/Match/match";
+// import Match from "./pages/Match/match";
+// import { Individual } from "./pages/Indi
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
         <Route path="/individual" element={<Individual />} />
         <Route path="/accessDenied" element={<AccessDenied />} />
         <Route path="/selectPost" element={<PostByBoard />} />
+        <Route path="/match" element={<Match/>} />
       </Routes>
     </div>
   );

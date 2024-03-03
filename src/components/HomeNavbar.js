@@ -71,6 +71,7 @@ color: 'inherit',
     export default function HomeNavbar(){
          // Drawer
     const [mobileOpen, setMobileOpen] = React.useState(false);
+    const [selectBoard,setSelectBoard]=React.useState("");
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
@@ -82,18 +83,16 @@ color: 'inherit',
         (async () => {
             try{
                 console.log("s:",s);
-                const api = process.env.REACT_APP_BASE_API + "selectPost/?board="+s;
-                console.log(api);
-                const response = await axios.get(api);
-                console.log(response);
-                if (response.request.status === 200) {
-                    console.log('成功');
+                setSelectBoard(s);
+                // const api = process.env.REACT_APP_BASE_API + "selectPost/?board="+s;
+                // console.log(api);
+                // const response = await axios.get(api);
+                // console.log(response);
+                // if (response.request.status === 200) {
+                //     console.log('成功');
                 // //   setShowAlert(true);
                 // //   localStorage.setItem('email:', email);
-                //   setTimeout(() => {
-                    navigate('/selectPost?board='+s);
-                //   }, 1000)
-                }
+                    navigate('/selectPost?board='+s+'&search='+searchtext);
             }catch(error){
                 // setErrorAlert(true);
                 // setTimeout(() => {
@@ -103,8 +102,9 @@ color: 'inherit',
         })()
     }
     const handleKeyDown = (event) => {
+        console.log("selectBoard:",selectBoard);
         if (event.keyCode === 13) {
-            navigate('/selectPost?search='+searchtext);
+            navigate('/selectPost?board='+selectBoard+'&search='+searchtext);
         //   // 在這裡處理 Enter 鍵被按下的情況
         //   console.log('Enter 鍵被按下');
         }
@@ -160,6 +160,9 @@ color: 'inherit',
     }
     const handlePageToHome=()=>{
         navigate('/home')
+    }
+    const handleMatch=()=>{
+        navigate('/match')
     }
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -300,7 +303,7 @@ color: 'inherit',
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
                             <Badge color="error">
-                                <PersonAddIcon />
+                                <PersonAddIcon onClick={handleMatch}/>
                             </Badge>
                         </IconButton>
                         <IconButton size="large" aria-label="show 4 new mails" color="inherit" onClick={()=>pathToAddPost()}>

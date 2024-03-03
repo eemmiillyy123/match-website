@@ -9,7 +9,6 @@ import Collapse from '@mui/material/Collapse';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { red } from '@mui/material/colors';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import CommentIcon from '@mui/icons-material/Comment';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -20,6 +19,9 @@ import Tooltip from '@mui/material/Tooltip';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Modal from '@mui/material/Modal';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import axios from "axios";
+import { useEffect } from 'react'
 const theme = createTheme();
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -50,29 +52,70 @@ const style = {
 
 export default function Cardblock({ list }) {
   const settings = ['編輯', '刪除'];
-  const [anchorEl, setAnchorEl] = React.useState(null); // State to manage anchor element for menu
-  // const [anchorElUser, setAnchorElUser] = React.useState < null | HTMLElement > (null);
+  const [anchorEl, setAnchorEl] = React.useState(null); 
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [modal, setModal] = React.useState(null);
-
+  const [favorite, setFavorite] = React.useState(false);
+  const [likeQuantity,setLikeQuantity]=React.useState(0);
   const [open, setOpen] = React.useState(false);
   const handleOpen = (item) => {
+    setFavorite(false);
     setModal(item)
     setOpen(true);
+    (async () => {
+      const likeCountApi = process.env.REACT_APP_BASE_API + "likeQuantity?articleId="+item.articleId;
+      const response =await  axios.get(likeCountApi);
+      setLikeQuantity(response.data);
+      const clickLikeApi = process.env.REACT_APP_BASE_API + "searchByUserIdArticleId?articleId="+item.articleId+"&email="+localStorage.getItem("email:");
+      const res =await  axios.get(clickLikeApi);
+      if(res.data===1){
+        setFavorite(true);
+      }
+    })();
   };
   const handleClose = () => setOpen(false);
 
   const handlePostMenu = (event) => {
-    setAnchorEl(event.currentTarget); // Open menu when MoreVertIcon is clicked
+    setAnchorEl(event.currentTarget); 
   };
   const handleCloseMenu = () => {
     setAnchorElUser(null);
   };
-
-  // const [expanded, setExpanded] = React.useState(false);
-  // const handleExpandClick = () => {
-  //   setExpanded(!expanded);
-  // };
+  const handleFavorite = (s) => {
+    setFavorite(true);
+    (async () => {
+      const api = process.env.REACT_APP_BASE_API + "clickLike";
+      const response =await  axios.post(api,{
+        articleId:s,
+        email:localStorage.getItem("email:")
+      });
+      console.log(response);
+      if (response.request.status === 200) {
+        setLikeQuantity(response.data);
+        // setList(response.data);
+      }
+    })()
+    
+  }
+  const handleCancelFavorite = (s) => {
+    setFavorite(false);
+    (async () => {
+      const api = process.env.REACT_APP_BASE_API + "clickLike";
+      const response =await  axios.post(api,{
+        articleId:s,
+        email:localStorage.getItem("email:")
+      });
+      console.log(response);
+      if (response.request.status === 200) {
+        setLikeQuantity(response.data);
+        // setList(response.data);
+      }
+    })()
+  }
+  // useEffect(() => {
+  //   if (modal === true) {
+  //   }
+  // },[modal]);
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -85,7 +128,8 @@ export default function Cardblock({ list }) {
                   <Typography variant="caption" display="block" gutterBottom>
                     {item.board}
                     <br />
-                    {new Date().toLocaleString(undefined, { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })}
+                    {item.createdDate}
+                    {/* {new Date().toLocaleString(undefined, { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })} */}
                   </Typography>
                 </Box>
 
@@ -117,11 +161,8 @@ export default function Cardblock({ list }) {
                         {item.title}
                       </Typography>
                     }
-
                   />
-
                   {/* 內文 */}
-
                   <CardContent sx={{ padding: '0px', margin: '0px' }}>
                     <Typography variant="body2" color="text.secondary">
                       <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '220px' }}>
@@ -137,8 +178,6 @@ export default function Cardblock({ list }) {
                       <CommentIcon fontSize="small" />
                     </IconButton>
                   </CardActions>
-
-
                   {/* <CardContent sx={{ padding:'0px',margin:'0px'}} style={{paddingBottom:'0px'}}> */}
                   {/* <CardContent sx={{ paddingBottom:'0px' ,margin:'0px'}}> */}
                   {/* 不能寫成以上寫法:使用 sx 屬性設定 paddingBottom 並不會生效，因為 CardContent 元件可能會覆蓋您在 sx 中設定的 paddingBottom。*/}
@@ -163,9 +202,7 @@ export default function Cardblock({ list }) {
                   sx={{ maxHeight: '25%', maxWidth: '25%', objectFit: "fit" }}
                 // style={'object':'fit';}
                 />)}
-
               </Box>
-
 
               <Menu
                 anchorEl={anchorEl}
@@ -207,17 +244,25 @@ export default function Cardblock({ list }) {
           <Box sx={style}>
             {modal && ( // 檢查modal是否存在
               <div style={{ maxHeight: '80vh', overflowY: 'auto' }}> {/* 添加滾動條 */}
-           {modal.selectBoard}
+                {modal.selectBoard}
                 <Typography id="modal-modal-title" variant="h6" component="h2">
                   {modal.title}
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                   {modal.context}
-                </Typography> 
-                  {modal.img && <img src={modal.img} alt='img' style={{ maxWidth: '50%', maxHeight: '50%' }}></img>}
-           </div> 
-          )} 
-         </Box>
+                </Typography>
+                {modal.img && <img src={modal.img} alt='img' style={{ maxWidth: '50%', maxHeight: '50%' }}></img>}
+                <hr style={{ marginTop: '180px' }} />
+                <Box display="flex" justifyContent="space-between">
+                  <Box display="flex" alignItems="center">
+                    <FavoriteIcon />
+                    {likeQuantity}
+                  </Box>
+                  {favorite ? (<FavoriteIcon onClick={() => handleCancelFavorite(modal.articleId)} />) : (<FavoriteBorderIcon onClick={() => handleFavorite(modal.articleId)} />)}
+                </Box>
+              </div>
+            )}
+          </Box>
           {/* <Box sx={style}>
             {modal && ( 
               <div style={{ maxHeight: '80vh', overflow: 'hidden' }}>

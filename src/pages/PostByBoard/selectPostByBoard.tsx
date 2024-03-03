@@ -11,19 +11,18 @@ function PostByBoard() {
     const searchParams = new URLSearchParams(window.location.search);
     const board = searchParams.get('board');
     const search = searchParams.get('search');
-    // console.log(window.location);
-    console.log("board:",board,"search:",search);
     useEffect(() => {
         (async () => {
             try {
                 // const api = process.env.REACT_APP_BASE_API + "selectPost/?board="+board+"&search=search";
                 let api = process.env.REACT_APP_BASE_API + "selectPost?";
-                if (board) {
+                if (board && search) {
+                    api += `board=${board}&search=${search}`;
+                  } else if (board) {
                     api += `board=${board}`;
-                }
-                if (search) {
+                  } else if (search) {
                     api += `search=${search}`;
-                }
+                  }
 
                 const response = await axios.get(api);
                 if (response.request.status === 200) {
