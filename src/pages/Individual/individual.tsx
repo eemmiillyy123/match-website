@@ -1,5 +1,5 @@
 import HomeNavbar from "@/components/HomeNavbar";
-import { Button, Chip, Grid, IconButton, InputBase, Modal, TextField, alpha, createTheme, styled } from "@mui/material";
+import { Alert, Button, Chip, Grid, IconButton, InputAdornment, InputBase, InputLabel, Modal, OutlinedInput, TextField, alpha, createTheme, styled } from "@mui/material";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
@@ -25,6 +25,9 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import axios from "axios";
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import CheckIcon from '@mui/icons-material/Check';
+import { useNavigate } from "react-router-dom";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 const theme = createTheme();
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -70,7 +73,19 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-interface IntroduceList {
+const reviseStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 260,
+  height: 260,
+  bgcolor: 'rgba(255, 255, 255, 1)',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+interface matchIntroduce {
   name: string;
   companyName: string;
   department: string;
@@ -80,74 +95,75 @@ interface IntroduceList {
   tall: string;
   userId: number;
 }
+interface Post {
+  articleId: number;
+  email: string;
+  title: string;
+  context: string;
+  board_id: string;
+  img: string;
+  shield: boolean;
+  createdDate: Date;
+}
+const rows = [
+  "信箱",
+  "使用者名稱",
+  "密碼"
+];
+const chipArray = ["唱歌", "跳舞", "旅遊", "看書", "烘焙", "烹飪", "調酒", "健身", "瑜珈", "游泳", "球類運動", "登山", "攝影", "看電影"
+  , "繪畫"];
+
 export default function Individual() {
-  const [value, setValue] = React.useState(0);
+  //我的文章
+  const [myPostList,setMyPostList]=React.useState<Post[]>([]);
+  //配對自介
+  const [value, setValue] = React.useState(1);
   const [imageURL, setImageURL] = React.useState('');
-  const [searchText, setSearchText] = React.useState('');
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [selectedChips, setSelectedChips] = React.useState<string[]>([]);
-  const [modalOpen, setModalOpen] = React.useState(false);
+  const [introduceModalOpen, setIntroduceModalOpen] = React.useState(false);
   const [name, setName] = React.useState('');
   const [companyName, setCompanyName] = React.useState('');
   const [department, setDepartment] = React.useState('');
   const [tall, setTall] = React.useState("");
-  // const [introduceList,setIntroduceList]=React.useState("");
-  const [introduceList, setIntroduceList] = React.useState<IntroduceList | null>(null);
+  const [matchState, setMatchState] = React.useState(false);
+  const [introduceList, setIntroduceList] = React.useState<matchIntroduce | null>(null);
+  //修改信箱
+  const [reviseEmail, setReviseEmail] = React.useState(false);
+  const [newEmail, setNewEmail] = React.useState("");
+  const [confirmNewEmail, setConfirmNewEmail] = React.useState("");
+  //修改使用者名稱
+  const [reviseUsername, setReviseUsername] = React.useState(false);
+  const [oldUsername, setUsername] = React.useState("");
+  const [newUsername, setNewUsername] = React.useState("");
+  //修改密碼
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [revisePassword, setRevisePassword] = React.useState(false);
+  const [oldPassword, setOldPassword] = React.useState("");
+  const [verifyOldPassword, setVerifyOldPassword] = React.useState(false);
+  const [newPassword, setNewPassword] = React.useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = React.useState("");
+  //修改是否成功
+  const [revise, setRevise] = React.useState<boolean>(false);
+  const [reviseSuccess, setReviseSuccess] = React.useState(false);
+  //錯誤訊息
+  const [error, setError] = React.useState('');
+  const [oldPasswordError, setoldPasswordError] = React.useState('');
+  const [newPasswordError, setnewPasswordError] = React.useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = React.useState('');
 
-  const [haveIntroduce,setHaveIntroduce]=React.useState(false);
-  // const [habit, setHabit] = React.useState<string[]>([]);
-  const [matchState, setMatchState] = React.useState('');
 
-  const Search = styled('div')(({ theme }) => ({
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.5),
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.common.white, 1),
-    },
-    marginRight: 0,
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      // marginLeft: theme.spacing(3),
-      width: 'auto',
-    },
-  }));
-  const SearchIconWrapper = styled('div')(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  }));
 
-  const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: 'inherit',
-    '& .MuiInputBase-input': {
-      padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-      transition: theme.transitions.create('width'),
-      width: '100%',
-      [theme.breakpoints.up('md')]: {
-        width: '20ch',
-      },
-    },
-  }));
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+ 
+
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
-  const postList = useSelector((state: { postList: PostListState[] }) => state.postList);
-  console.log('postList:', postList);
-  function handleDelete(event: any): void {
-    throw new Error("Function not implemented.");
-  }
-
-  //在頁面上進行圖片預覽
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {//這個事件物件表示檔案輸入框的變化，即使用者選擇了新的檔案或取消了選擇
+  //配對自介
+  const [haveIntroduce, setHaveIntroduce] = React.useState(false);
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {//圖片預覽:這個事件物件表示檔案輸入框的變化，即使用者選擇了新的檔案或取消了選擇
     const file = event.target.files?.[0];//屬性取得使用者選擇的檔案清單。 由於文件輸入框可能為空，使用可選鏈運算符 ?避免空引用錯誤
     if (file) {//檢查是否選擇了文件
       setSelectedFile(file);
@@ -155,79 +171,275 @@ export default function Individual() {
       setImageURL(imageURL);
     }
   };
-
-  const handleChipClick = (chipLabel: string) => { // 明確指定參數類型為 string
+  const handleChipClick = (chipLabel: string) => { 
     if (!selectedChips.includes(chipLabel)) {
       setSelectedChips([...selectedChips, chipLabel]);
     }
   };
-
-  const handleChipDelete = (chipLabel: string) => { // 明確指定參數類型為 string
+  const handleChipDelete = (chipLabel: string) => { 
     setSelectedChips(selectedChips.filter((chip) => chip !== chipLabel));
   };
-  const rows = [
-    "信箱",
-    "使用者名稱",
-    "密碼"
-  ];
-  const chipArray = ["唱歌", "跳舞", "旅遊", "看書", "烘焙", "烹飪", "調酒", "健身", "瑜珈", "游泳", "球類運動", "登山", "攝影", "看電影"
-    , "繪畫"];
-  const handleOpenModal = () => {
-    setModalOpen(true);
+  const handleSave = async() => {
+    // (async () => {
+        setIntroduceModalOpen(false);
+        const formData = new FormData();
+        formData.append('email', localStorage.getItem('email:') || '');
+        formData.append('name', name);
+        formData.append('companyName', companyName);
+        formData.append('department', department);
+        formData.append('tall', tall);
+        formData.append('habit', selectedChips.join(','));
+        formData.append('matchState', matchState.toString());
+        if (selectedFile) {
+          formData.append('file', selectedFile);
+        }
+        console.log("formData:", formData);
+        formData.forEach((value, key) => {
+          console.log(key, value);
+        });
+        // for (const [key, value] of formData.entries()) {
+        //   console.log(key, value);
+        // }
+      if(haveIntroduce!==true){
+        const introduceRes= await axios.post(process.env.REACT_APP_BASE_API + 'saveMatchIntroduce', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        console.log("introduceRes:", introduceRes.data);
+        setIntroduceList(introduceRes.data);
+      }else{
+        const updateIntroduceRes= await axios.post(process.env.REACT_APP_BASE_API + 'updataMatchIntroduce', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        setIntroduceList(updateIntroduceRes.data);
+      }
+     
+    // }
+    // )(
+
+    // );
+  }
+  const clickReviseButton = () => {
+    setIntroduceModalOpen(true);
+    setRevise(true);
+    setSelectedChips((introduceList as matchIntroduce).habit.split(","));
+    setCompanyName((introduceList as matchIntroduce).companyName);
+    setDepartment((introduceList as matchIntroduce).department);
+    setImageURL((introduceList as matchIntroduce).img);
+    setMatchState((introduceList as matchIntroduce).matchState);
+    setName((introduceList as matchIntroduce).name);
+    setTall((introduceList as matchIntroduce).tall);
+    console.log("imageURL:",imageURL);
+  };
+  const clickAddButton = () => {
+    setIntroduceModalOpen(true);
     console.log()
   };
-  const handleClose = () => setModalOpen(false);
-  const handleSave = () => {
-    (async () => {
-      console.log("selectedChips:", selectedChips);
-      const formData = new FormData();
-      formData.append('email', localStorage.getItem('email:') || '');
-      formData.append('name', name);
-      formData.append('companyName', companyName);
-      formData.append('department', department);
-      formData.append('tall', tall);
-      formData.append('habit', selectedChips.join(','));
-      formData.append('matchState', matchState);
-      //   formData.append('file', selectedFile);
-      if (selectedFile) {
-        formData.append('file', selectedFile);
-      }
-      console.log("formData:", formData);
-      formData.forEach((value, key) => {
-        console.log(key, value);
-      });
-      // for (const [key, value] of formData.entries()) {
-      //   console.log(key, value);
-      // }
+  const IntroduceModalClose = () => {
+    setIntroduceModalOpen(false);
+  }
 
-      const response = await axios.post(process.env.REACT_APP_BASE_API + 'saveMatchIntroduce', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+  //修改個人資料頁面
+  const handlePersonInform = (row: string) => {
+    console.log("row:", row);
+    if (row === "信箱") {
+      setReviseEmail(true);
+    } else if (row === "使用者名稱") {
+      (async () => {
+        const response = await axios.get(process.env.REACT_APP_BASE_API + 'user/getUserByEmail?email=' + localStorage.getItem("email:"));
+        console.log("response:", response);
+        setUsername(response.data.username);
+        setReviseUsername(true);
+      })();
+    } else if (row === "密碼") {
+      setRevisePassword(true);
+    }
+  }
+
+  //Modal
+  const handleModalEmailClose = () => {
+    setReviseEmail(false);
+  }
+  const handleModalUsernameClose = () => {
+    setReviseUsername(false);
+  }
+  const handleModalPasswordClose = () => {
+    setRevisePassword(false);
+  }
+
+  //信箱
+  const handleNewEmailChange = (e: any) => {
+    const newValue = e.target.value;
+    setNewEmail(newValue);
+    if (newValue !== confirmNewEmail) {
+      setError('新信箱和確認信箱需一致');
+    } else {
+      setError('');
+    }
+  };
+  const handleConfirmNewEmailChange = (e: any) => {
+    const newValue = e.target.value;
+    setConfirmNewEmail(newValue);
+    if (newValue !== newEmail) {
+      setError('新信箱和確認信箱需一致');
+    } else {
+      setError('');
+    }
+  };
+  const handleReviseEmail = () => {
+    (async () => {
+      const response = await axios.post(process.env.REACT_APP_BASE_API + 'user/reviseEmail', {
+        oldEmail: localStorage.getItem("email:"),
+        newEmail: newEmail
       });
-      // if(response.data===1){
-      // setFavorite(true);
-      // }
+      if (response.request.status === 200) {
+        setReviseSuccess(true);//控制Alert的出現
+        setTimeout(() => {
+          setReviseSuccess(false);
+          setReviseEmail(false);//修改完就把modal關起來
+          localStorage.setItem("email:", response.data.email);
+        }, 2000);
+      }
     })();
   }
+
+  //使用者名稱
+  const handleReviseUsername = () => {
+    (async () => {
+      const response = await axios.post(process.env.REACT_APP_BASE_API + 'user/reviseUsername', {
+        username: newUsername,
+        email: localStorage.getItem("email:")
+      });
+      if (response.request.status === 200) {
+        setReviseSuccess(true);
+        setTimeout(() => {
+          setReviseSuccess(false);
+          setReviseUsername(false);
+        }, 2000);
+      }
+    })();
+  }
+
+  //密碼
+  const handleClickShowPassword = () => setShowPassword((show:boolean) => !show);
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
+  const handleOldPasswordChange = (e: any) => {
+    console.log(e.target.value);
+    setOldPassword(e.target.value);
+  }
+  const handleNewPasswordChange = (e: any) => {
+    const newPassword = e.target.value;
+    setNewPassword(newPassword);
+    if (newPassword === "") {
+      setnewPasswordError('密碼為必填');
+    } else if (newPassword.toString().length < 6) {
+      setnewPasswordError('密碼不少於 6 碼');
+    } else if (newPassword.toString().length > 12) {
+      setnewPasswordError('密碼不大於 12 碼');
+    } else if (newPassword !== confirmNewPassword) {
+      setnewPasswordError('新密碼和確認密碼需一致');
+      setConfirmPasswordError('新密碼和確認密碼需一致');
+    } else {
+      setnewPasswordError('');
+      setConfirmPasswordError('');
+    }
+  };
+  const handleConfirmNewPasswordChange = (e: any) => {
+    const confirmNewPassword = e.target.value;
+    setConfirmNewPassword(confirmNewPassword);
+    if (confirmNewPassword === "") {
+      setConfirmPasswordError('確認密碼為必填');
+    } else if (confirmNewPassword.toString().length < 6) {
+      setConfirmPasswordError('確認密碼不少於 6 碼');
+    } else if (confirmNewPassword.toString().length > 12) {
+      setConfirmPasswordError('確認密碼不大於 12 碼');
+    } else if (newPassword !== confirmNewPassword) {
+      setnewPasswordError('新密碼和確認密碼需一致');
+      setConfirmPasswordError('新密碼和確認密碼需一致');
+    } else {
+      setnewPasswordError('');
+      setConfirmPasswordError('');
+    }
+  }
+  const handleRevisePassword = () => {
+    (async () => {
+      console.log("newPassword=",newPassword);
+      const response = await axios.get(process.env.REACT_APP_BASE_API + 'user/revisePassword?newPassword=' + newPassword + "&email=" + localStorage.getItem("email:"));
+      if (response.request.status === 200) {
+        setReviseSuccess(true);
+        setTimeout(() => {
+          setReviseSuccess(false);
+          setRevisePassword(false);
+        }, 2000);
+      }
+    })();
+  }
+  const handleMouseLeave = async () => {
+    try {
+      const response = await axios.get(process.env.REACT_APP_BASE_API + 'user/verifyPassword?oldPassword=' + oldPassword + "&email=" + localStorage.getItem("email:"));
+      console.log(response.data);
+      if (response.data !== true) {
+        setVerifyOldPassword(false);
+        setoldPasswordError('密碼不正確');
+      }
+      else {
+        setVerifyOldPassword(true);
+        console.log("密碼正確");
+      }
+    } catch (error) {
+      console.error("Error occurred while verifying password:", error);
+    }
+  }
+ 
   useEffect(() => {
     (async () => {
-        try{
-          const getUserIdApi = process.env.REACT_APP_BASE_API + "getUserIdByEmail?email="+localStorage.getItem("email:");
-          const getUserIdRes = await axios.get(getUserIdApi);
-          const api = process.env.REACT_APP_BASE_API + "getMatchIntroduce?userId="+getUserIdRes.data;
-          const response = await axios.get(api);
-          console.log(response.data);
-          setIntroduceList(response.data);
-          setHaveIntroduce(true);
-        }catch(error){
+      try {
+        const myArticleApi=process.env.REACT_APP_BASE_API + "getMyPostByEmail?email="+localStorage.getItem("email:");
+        console.log("myArticleApi:",myArticleApi);
+        const myArticleRes=await axios.get(myArticleApi);
+        console.log("myArticleRes:",myArticleRes);
+        setMyPostList(myArticleRes.data);
+        const getUserIdApi = process.env.REACT_APP_BASE_API + "getUserIdByEmail?email=" + localStorage.getItem("email:");
+              const getUserIdRes = await axios.get(getUserIdApi);
+
+        const api = process.env.REACT_APP_BASE_API + "getMatchIntroduce?userId=" + getUserIdRes.data;
+        console.log("api:",api);
+              const response = await axios.get(api);
+              console.log("response:",response.data);
+              setIntroduceList(response.data);
+              setHaveIntroduce(true);
+      } catch (error) {
         //   setErrorAlert(true);
         //   setTimeout(() => {
         //     window.location.reload(); // 登入失敗後 2 秒重新加載頁面
         //   }, 2000);
-        }
-      })()
-    }, [])
+      }
+    })()
+  }, [])
+  // useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       const getUserIdApi = process.env.REACT_APP_BASE_API + "getUserIdByEmail?email=" + localStorage.getItem("email:");
+  //       const getUserIdRes = await axios.get(getUserIdApi);
+  //       const api = process.env.REACT_APP_BASE_API + "getMatchIntroduce?userId=" + getUserIdRes.data;
+  //       const response = await axios.get(api);
+  //       console.log("response:",response.data);
+  //       setIntroduceList(response.data);
+  //       setHaveIntroduce(true);
+  //     } catch (error) {
+  //       //   setErrorAlert(true);
+  //       //   setTimeout(() => {
+  //       //     window.location.reload(); // 登入失敗後 2 秒重新加載頁面
+  //       //   }, 2000);
+  //     }
+  //   })()
+  // }, [introduceList])
+
   return (
     <>
       <HomeNavbar />
@@ -235,109 +447,92 @@ export default function Individual() {
         <Box sx={{ justifyContent: 'center', display: 'flex', flexDirection: 'row' }}>
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs orientation="vertical"
-              variant="scrollable" value={value} onChange={handleChange} aria-label="basic tabs example">
+              variant="scrollable" value={value} onChange={handleTabChange} aria-label="basic tabs example">
               <Tab label="我的文章" {...a11yProps(0)} />
               <Tab label="配對自介" {...a11yProps(1)} />
               <Tab label="訊息" {...a11yProps(2)} />
-              <Tab label="配對" {...a11yProps(3)} />
+              <Tab label="配對結果" {...a11yProps(3)} />
               <Tab label="修改個人資料" {...a11yProps(4)} />
             </Tabs>
           </Box>
-
-
           <Box sx={{ backgroundColor: '#f3f5f6', width: '600px' }}>
             {/* 檢查 postList 是否為空， title和context都不能為空 */}
             <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
               <CustomTabPanel value={value} index={0}>
-                <Cardblock list={postList.filter(item => item.title !== '' && item.context !== '')} />
+                <Cardblock list={myPostList} />
               </CustomTabPanel>
             </Box>
             <CustomTabPanel value={value} index={1}>
-                <Box display="flex" justifyContent="center" marginY="10px">
-                  {haveIntroduce && introduceList ?<img src={introduceList.img} alt="" width="150px" height="200px"/>:<AccountBoxIcon sx={{ fontSize: 80 }} />}
-                </Box>
-                <Grid container spacing={2} width="400px" marginLeft="auto" marginRight="auto">
-                  <Grid item xs={12} sm={6} >
-                    {/* <Box > */}
-                    <Typography variant="h6" sx={{ verticalAlign: 'top' }}>
-                      名字
-                    </Typography>
-                    <Typography variant="body1" sx={{ verticalAlign: 'top' }}>
-                    {/* {haveIntroduce && typeof introduceList === 'object' ? introduceList.name : <p>name</p>} */}
-                      {haveIntroduce && introduceList ? (introduceList as IntroduceList).name : "尚未填寫"}
-                    </Typography>
-                    {/* </Box> */}
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    {/* <Box textAlign="center"> */}
-                    <Typography variant="h6" sx={{ verticalAlign: 'top' }}>
-                      公司名稱
-                    </Typography>
-                    <Typography variant="body1" sx={{ verticalAlign: 'top' }}>
-                      {haveIntroduce && introduceList ? (introduceList as IntroduceList).companyName : "尚未填寫"}
-                    </Typography>
-                    {/* </Box> */}
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    {/* <Box textAlign="center"> */}
-                    <Typography variant="h6" sx={{ verticalAlign: 'top' }}>
-                      部門
-                    </Typography>
-                    <Typography variant="body1" sx={{ verticalAlign: 'top' }}>
-                    {haveIntroduce && introduceList ? (introduceList as IntroduceList).department : "尚未填寫"}
-                      
-                    </Typography>
-                    {/* </Box> */}
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    {/* <Box> */}
-                      <Typography variant="h6" sx={{ verticalAlign: 'top' }}>
-                        身高
-                      </Typography>
-                      <Typography variant="body1" sx={{ verticalAlign: 'top' }}>
-                      {haveIntroduce && introduceList ? (introduceList as IntroduceList).tall : "尚未填寫"}
-                      </Typography>
-                    {/* </Box> */}
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Box>
-                    <Typography variant="h6" sx={{ verticalAlign: 'top' }}>
-                        興趣
-                      </Typography>
-                      <Typography variant="body1" sx={{ verticalAlign: 'top' }}>
-                      {haveIntroduce && introduceList ? (introduceList as IntroduceList).habit : "尚未填寫"}
-                        
-                      </Typography>
-                    </Box>
-                  </Grid>
-                  <Grid item sm={6}>
-                    <Box>
-                    <Typography variant="h6" >
-                        是否要配對
-                      </Typography>
-                      <Typography variant="body1" >
-                        
-                      {haveIntroduce && introduceList ? ((introduceList as IntroduceList).matchState ? "是" : "否") : "尚未選擇"}
-
-                      </Typography>
-                    </Box>
-                  </Grid>
+              <Box display="flex" justifyContent="center" marginY="10px">
+                {haveIntroduce && introduceList ? <img src={introduceList.img} alt="" width="150px" height="200px" /> : <AccountBoxIcon sx={{ fontSize: 80 }} />}
+              </Box>
+              <Grid container spacing={2} width="400px" marginLeft="auto" marginRight="auto">
+                <Grid item xs={12} sm={6} >
+                  <Typography variant="h6" sx={{ verticalAlign: 'top' }}>
+                    名字
+                  </Typography>
+                  <Typography variant="body1" sx={{ verticalAlign: 'top' }}>
+                    {haveIntroduce && introduceList ? (introduceList as matchIntroduce).name : "尚未填寫"}
+                  </Typography>
                 </Grid>
-                <Box display="flex" justifyContent="center" marginTop="80px">
-                  {haveIntroduce && introduceList ?<Button variant="contained" size="small" onClick={() => handleOpenModal()}>更改</Button>:<Button variant="contained" size="small" onClick={() => handleOpenModal()}>新增</Button>}
-                </Box>
-
-
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="h6" sx={{ verticalAlign: 'top' }}>
+                    公司名稱
+                  </Typography>
+                  <Typography variant="body1" sx={{ verticalAlign: 'top' }}>
+                    {haveIntroduce && introduceList ? (introduceList as matchIntroduce).companyName : "尚未填寫"}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="h6" sx={{ verticalAlign: 'top' }}>
+                    部門
+                  </Typography>
+                  <Typography variant="body1" sx={{ verticalAlign: 'top' }}>
+                    {haveIntroduce && introduceList ? (introduceList as matchIntroduce).department : "尚未填寫"}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="h6" sx={{ verticalAlign: 'top' }}>
+                    身高
+                  </Typography>
+                  <Typography variant="body1" sx={{ verticalAlign: 'top' }}>
+                    {haveIntroduce && introduceList ? (introduceList as matchIntroduce).tall : "尚未填寫"}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Box>
+                    <Typography variant="h6" sx={{ verticalAlign: 'top' }}>
+                      興趣
+                    </Typography>
+                    <Typography variant="body1" sx={{ verticalAlign: 'top' }}>
+                      {haveIntroduce && introduceList ? (introduceList as matchIntroduce).habit : "尚未填寫"}
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item sm={6}>
+                  <Box>
+                    <Typography variant="h6" >
+                      是否要配對
+                    </Typography>
+                    <Typography variant="body1" >
+                      {haveIntroduce && introduceList ? ((introduceList as matchIntroduce).matchState ? "是" : "否") : "尚未選擇"}
+                    </Typography>
+                  </Box>
+                </Grid>
+              </Grid>
+              <Box display="flex" justifyContent="center" marginTop="80px">
+                {haveIntroduce && introduceList ? <Button variant="contained" size="small" onClick={() => clickReviseButton()}>更改</Button> : <Button variant="contained" size="small" onClick={() => clickAddButton()}>新增</Button>}
+              </Box>
             </CustomTabPanel>
             <CustomTabPanel value={value} index={2}>
               訊息
             </CustomTabPanel>
             <CustomTabPanel value={value} index={3}>
-              配對
+              尚無配對結果
             </CustomTabPanel>
             <CustomTabPanel value={value} index={4}>
               <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <Table sx={{ maxWidth: 650 }} aria-label="simple table">
                   <TableBody>
                     {rows.map((row, index) => (
                       <TableRow
@@ -347,34 +542,24 @@ export default function Individual() {
                         <TableCell component="th" scope="row">
                           {row}
                         </TableCell>
-                        <TableCell align="right"><Button variant="contained" size="small">更改</Button></TableCell>
+                        <TableCell align="right"><Button variant="contained" size="small" onClick={() => handlePersonInform(row)}>更改</Button></TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               </TableContainer>
-              {/* <Box display="flex" >
-                <Box display="flex" justifyContent="space-between">
-                  <p>信箱</p>
-                  <button>更改</button>
-                </Box>
-                <p>使用者名稱</p>
-                <p>密碼</p>
-              </Box> */}
             </CustomTabPanel>
           </Box>
-
         </Box>
       </Box>
       <Modal
-        open={modalOpen}
-        onClose={handleClose}
+        open={introduceModalOpen}
+        onClose={IntroduceModalClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          {modalOpen && ( // 檢查modal是否存在
-            // <div>
+          {introduceModalOpen && ( // 檢查modal是否存在
             <Box display="flex"
               alignItems="flex-start"
               justifyContent="space-between"
@@ -391,16 +576,27 @@ export default function Individual() {
               >
                 {imageURL && (
                   <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
-                    <img src={imageURL} alt="Uploaded" style={{ width: '100%', height: '100%', objectFit: 'fill' }} />
+                    <img src={revise?introduceList?.img:imageURL} alt="Uploaded" style={{ width: '100%', height: '100%', objectFit: 'fill' }} />
                     <IconButton
                       sx={{ position: 'absolute', top: 0, right: 0, color: 'white' }}
-                      onClick={() => setImageURL('')}
-                    // 清除預覽照片
+                      onClick={() => setImageURL('')}// 清除預覽照片
                     >
                       <ClearIcon />
                     </IconButton>
                   </Box>
                 )}
+                {/* {revise && (
+                  <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
+                    <img src={introduceList?.img} alt="Uploaded" style={{ width: '100%', height: '100%', objectFit: 'fill' }} />
+                    <IconButton
+                      sx={{ position: 'absolute', top: 0, right: 0, color: 'white' }}
+                      onClick={() => setImageURL('')}
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </Box>
+                )} */}
+
                 <Box p='7px' sx={{
                   borderRadius: 1, bgcolor: "#a49e9e", opacity: '0.6', '&:hover': {
                     cursor: "pointer",
@@ -412,7 +608,6 @@ export default function Individual() {
                     onChange={handleImageUpload}
                     style={{ display: 'none' }}
                     id="imageUploadInput"
-
                   />
                   <label htmlFor="imageUploadInput">
                     <CameraAltIcon />
@@ -429,6 +624,7 @@ export default function Individual() {
                     variant='outlined'
                     label="名字"
                     size="small"
+                    name="name"
                     value={name}
                     onChange={(e) => { setName(e.target.value) }}
                   />
@@ -439,6 +635,8 @@ export default function Individual() {
                     variant='outlined'
                     label="公司名稱"
                     size="small"
+                    name="companyName"
+                    // value={companyName}
                     value={companyName}
                     onChange={(e) => { setCompanyName(e.target.value) }}
                   />
@@ -459,30 +657,15 @@ export default function Individual() {
                     variant='outlined'
                     label="身高"
                     size="small"
+                    // value={tall}
                     value={tall}
-                    onChange={(e) => { setTall(e.target.value) }}
+                    onChange={(e) => {
+                      setTall(e.target.value)
+                    }}
                   />
                 </Grid>
                 <Grid item >
-                  <p>興趣</p>
-                  {/* <input type="search" /> */}
-                  {/* <Search>
-                            <SearchIconWrapper>
-                              <SearchIcon />
-                            </SearchIconWrapper>
-                            <StyledInputBase
-                              placeholder="Search…"
-                              value={selectedChips.map((chipLabel) => (
-                                // <Chip
-                                //   key={chipLabel}
-                                //   label={chipLabel}
-                                //   onDelete={() => handleChipDelete(chipLabel)}
-                                // />
-                                <Chip label="唱歌" onClick={() => handleChipClick('唱歌')} />
-                              ))}
-                              // inputProps={{ 'aria-label': 'search' }}
-                            />
-                          </Search> */}
+                  <p style={{ marginBottom: "8px" }}>興趣</p>
                   {selectedChips.map((chipLabel, index) => (
                     <Chip
                       key={index}
@@ -490,17 +673,10 @@ export default function Individual() {
                       onDelete={() => handleChipDelete(chipLabel)}
                     />
                   ))}
-                  {/* <StyledInputBase
-                                    placeholder="Search…"
-                                    inputProps={{ 'aria-label': 'search' }} /> */}
-                  {/* </Search> */}
-                  <p>推薦選項:</p>
+                  <p style={{ marginBottom: "8px", marginTop: "8px" }}>推薦選項:</p>
                   {chipArray.map((chip, index) => (
                     <Chip key={index} label={chip} onClick={() => handleChipClick(chip)} />
                   ))}
-                  {/* <Chip label="唱歌" onClick={() => handleChipClick('唱歌')} />
-                    <Chip label="跳舞" onClick={() => handleChipClick('跳舞')} />
-                    <Chip label="旅遊" onClick={() => handleChipClick('旅遊')} /> */}
                   <br />
                 </Grid>
                 <Grid item >
@@ -510,8 +686,10 @@ export default function Individual() {
                     row
                     aria-labelledby="demo-row-radio-buttons-group-label"
                     name="row-radio-buttons-group"
-                    value={matchState}
-                    onChange={(e) => { setMatchState(e.target.value) }}
+                    value={matchState.toString()} // 将布尔状态转换为字符串
+                    onChange={(e) => { setMatchState(e.target.value === "true") }} 
+                    // value={matchState}
+                    // onChange={(e) => { setMatchState(e.target.value) }}
                   >
                     <FormControlLabel value="true" control={<Radio />} label="是" />
                     <FormControlLabel value="false" control={<Radio />} label="否" />
@@ -526,13 +704,221 @@ export default function Individual() {
             </Box>
             // </div>
           )}
+
         </Box>
       </Modal>
-      {/*  */}
-      {/*  改個人資料*/}
-      {/* </Box> */}
+      <Modal
+        open={reviseEmail}
+        onClose={handleModalEmailClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={reviseStyle}>
+          {reviseEmail && (
+            <Box display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+              gap={3}>
+              <Typography variant="body1" sx={{ verticalAlign: 'top' }}>
+                目前信箱:{localStorage.getItem("email:")}
+              </Typography>
+              <TextField
+                type="text"
+                variant='outlined'
+                label="新信箱"
+                size="small"
+                onMouseLeave={handleNewEmailChange}
+                error={oldPasswordError !== ''}
+                helperText={oldPasswordError}
+              />
+              <TextField
+                type="text"
+                variant='outlined'
+                label="確認信箱"
+                size="small"
+                onChange={handleConfirmNewEmailChange}
+                error={error !== ''}
+                helperText={error}
+              />
+              <Button variant="contained" size="small" onClick={() => handleReviseEmail()}>更改</Button>
+              {reviseSuccess && <Alert icon={<CheckIcon fontSize="inherit" />} severity="success" style={{ width: '200px', position: 'fixed', bottom: "5%", left: '15%' }}>
+                更改信箱成功!
+              </Alert>}
+            </Box>
+          )}
+        </Box>
+      </Modal>
+      <Modal
+        open={reviseUsername}
+        onClose={handleModalUsernameClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={reviseStyle}>
+          {reviseUsername && (
+            <Box display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+              gap={3}>
+              <Typography variant="body1" sx={{ verticalAlign: 'top' }}>
+                目前使用者名稱:{oldUsername}
+              </Typography>
+              <TextField
+                type="text"
+                variant='outlined'
+                label="新的使用者名稱"
+                size="small"
+                onChange={(e) => setNewUsername(e.target.value)}
+              />
+              <Button variant="contained" size="small" onClick={() => handleReviseUsername()}>更改</Button>
+              {reviseSuccess && <Alert icon={<CheckIcon fontSize="inherit" />} severity="success" style={{ width: '200px', position: 'fixed', bottom: "5%", left: '15%' }}>
+                更改使用者名稱成功!
+              </Alert>}
+            </Box>
+          )}
+        </Box>
+      </Modal>
+      <Modal
+        open={revisePassword}
+        onClose={handleModalPasswordClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={reviseStyle}>
+          {revisePassword && (
+            <Box display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+              gap={3}>
+              {/* <TextField
+                type="text"
+                variant='outlined'
+                label="請輸入目前密碼:"
+                size="small"
+                value={oldPassword}
+                onChange={handleOldPasswordChange}
+                // onMouseLeave={handleMouseLeave}
+                error={oldPasswordError !== '' && !verifyOldPassword}
+                helperText={verifyOldPassword ? "密碼正確" : oldPasswordError}
+              /> */}
+              {/* <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined" size='small'>
+               <InputLabel htmlFor="outlined-adornment-password">目前密碼</InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-password"
+                  type={showPassword ? 'text' : 'password'}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  value={newPassword}
+                  onChange={handleNewPasswordChange}
+                  error={newPasswordError !== ''}
+                  // helperText={newPasswordError}
+                  label="新密碼"
+                />
+                 {newPasswordError&& (
+                  <Typography variant="body2" color="error" sx={{ marginTop:'4px',marginX:'14px',fontSize:'0.75rem' }}>
+                    {newPasswordError}
+                  </Typography>
+                )}
+              </FormControl> */}
+              {/* <TextField
+                type="text"
+                variant='outlined'
+                label="新密碼"
+                size="small"
+                value={newPassword}
+                onChange={handleNewPasswordChange}
+                error={newPasswordError !== ''}
+                helperText={newPasswordError}
+              /> */}
+              <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined" size='small'>
+               <InputLabel htmlFor="outlined-adornment-password">新密碼</InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-password"
+                  type={showPassword ? 'text' : 'password'}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  value={newPassword}
+                  onChange={handleNewPasswordChange}
+                  error={newPasswordError !== ''}
+                  // helperText={newPasswordError}
+                  label="新密碼"
+                />
+                 {newPasswordError&& (
+                  <Typography variant="body2" color="error" sx={{ marginTop:'4px',marginX:'14px',fontSize:'0.75rem' }}>
+                    {newPasswordError}
+                  </Typography>
+                )}
+              </FormControl>
+              <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined" size='small'>
+               <InputLabel htmlFor="outlined-adornment-password">確認密碼</InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-password"
+                  type={showPassword ? 'text' : 'password'}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  value={confirmNewPassword}
+                  onChange={handleConfirmNewPasswordChange}
+                  error={confirmPasswordError !== ''}
+                  label="確認密碼"
+                />
+                {confirmPasswordError&& (
+                  <Typography variant="body2" color="error" sx={{ marginTop:'4px',marginX:'14px',fontSize:'0.75rem' }}>
+                    {confirmPasswordError}
+                  </Typography>
+                )}
+              </FormControl>
+              {/* <TextField
+                type="text"
+                variant='outlined'
+                label="確認密碼"
+                size="small"
+                value={confirmNewPassword}
+                onChange={handleConfirmNewPasswordChange}
+                error={confirmPasswordError !== ''}
+                helperText={confirmPasswordError}
+              /> */}
+              <Button variant="contained" size="small" onClick={() => handleRevisePassword()}>更改</Button>
+              {reviseSuccess && <Alert icon={<CheckIcon fontSize="inherit" />} severity="success" style={{ width: '200px', position: 'fixed', bottom: "5%", left: '15%' }}>
+                更改密碼成功!
+              </Alert>}
+            </Box>
+          )}
+        </Box>
+      </Modal>
     </>
-
   );
 };
 

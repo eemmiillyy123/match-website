@@ -120,7 +120,7 @@ export default function Cardblock({ list }) {
     <>
       <ThemeProvider theme={theme}>
         {Array.isArray(list) && list.map((item, index) => (
-          <Box key={index} sx={{ mb: '3px' }}>
+          <Box key={index} sx={{ mb: '10px' }}>
             <Card key={index} sx={{ maxWidth: '600px', padding: 0 }} onClick={() => handleOpen(item)}>
               {/* 標題 */}
               <CardContent style={{ paddingTop: '0px', paddingBottom: '0px', display: 'flex', justifyContent: 'space-between' }}>
@@ -140,7 +140,7 @@ export default function Cardblock({ list }) {
                 </Tooltip>
 
               </CardContent>
-              <Box sx={{ width: '350px', padding: "0 1rem 0 1rem", display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <Box sx={{ width: '400px', padding: "0 1rem 0 1rem", display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Box>
                   <CardHeader sx={{ padding: '0px' }}
                     // avatar={

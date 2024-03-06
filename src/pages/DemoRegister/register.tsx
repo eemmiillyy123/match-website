@@ -179,7 +179,10 @@ function DemoRegister() {
                     <InputAdornment position="end">
                       <IconButton
                         aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
+                        onClick={(e) => {
+                          
+                          handleClickShowPassword();
+                      }}
                         onMouseDown={handleMouseDownPassword}
                         edge="end"
                       >
@@ -204,7 +207,6 @@ function DemoRegister() {
                   })}
                   error={!!errors.password}
                 // helperText={errors.password ? (errors.password.message as string | undefined) : ''}
-
                 />
                 {/* {errors.password && <span>{errors.password.message as string}</span>} */}
                 {/* {errors.password ? (errors.password.message as string | undefined) : ''} */}

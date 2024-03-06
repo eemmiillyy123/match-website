@@ -8,7 +8,10 @@ import DemoHome from "./pages/DemoHome/home";
 import DemoAddPost from "./pages/DemoAddPost/addPost";
 import Individual from "./pages/Individual/individual";
 import PostByBoard from "./pages/PostByBoard/selectPostByBoard";
-import Match from "./pages/Match/match";
+import Match from "./pages/MatchIndex/match";
+import MatchTarget from "./pages/MatchTarget/matchTarget";
+import MatchResult from "./pages/MatchResult/matchResult";
+import MatchFail from "./pages/MatchFail/matchFail";
 // import Match from "./pages/Match/match";
 // import { Individual } from "./pages/Indi
 
@@ -25,6 +28,9 @@ function App() {
         <Route path="/accessDenied" element={<AccessDenied />} />
         <Route path="/selectPost" element={<PostByBoard />} />
         <Route path="/match" element={<Match/>} />
+        <Route path="/matchTarget" element={<MatchTarget/>} />
+        <Route path="/matchResult" element={<MatchResult/>} />
+        <Route path="/matchFail" element={<MatchFail/>} />
       </Routes>
     </div>
   );
