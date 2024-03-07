@@ -1,6 +1,5 @@
 import { Alert, AppBar, Button, FormHelperText, IconButton, Input, InputAdornment, InputLabel, OutlinedInput, TextField, Toolbar, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
-import Container from '@mui/material/Container'
 import CssBaseline from '@mui/material/CssBaseline'
 import Grid from '@mui/material/Grid'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
@@ -20,52 +19,16 @@ function DemoRegister() {
   const [showPassword, setShowPassword] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [errorAlert, setErrorAlert] = useState(false);
+  const { register, handleSubmit, formState: { errors }, watch } = useForm();
   const navigate = useNavigate();
-  // const handleRegister = () => {
-  //   console.log('regiter');
-  //   (async () => {
-  //     // console.log(process.env.REACT_APP_PATH);//看一下環境變數是否有正常取得
-  //     const api = process.env.REACT_APP_BASE_API + "user/register";
-  //     console.log('api', api);
-  //     // const path=process.env.REACT_APP_PATH;
-  //     const response = await axios.post(api,
-  //       {
-  //         username: name,
-  //         email: email,
-  //         password: password
-  //       }
-  //       // ,{
-  //       // headers: { 
-  //       //   // 'x-apikey': '59a7ad19f5a9fa0808f11931',
-  //       //   'Access-Control-Allow-Origin' : '*',
-  //       //   'Access-Control-Allow-Methods':'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-  //       // }}
-  //     );
-  //     if (response.request.status === 201) {
-  //       console.log('註冊成功，即將前往登入頁面');
-  //       setShowAlert(true);
-  //       setTimeout(() => {
-  //         navigate('/login');
-  //       }, 3000)
-  //     }
-  //     console.log('response:', response);
-  //   })();
-
-  // }
-  // const handleClickShowPassword = () => setShowPassword((show) => !show);
-  // const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-  //   event.preventDefault();
-  // };
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
-  const { register, handleSubmit, formState: { errors }, watch } = useForm();
 
   useEffect(() => {
     const subscription = watch((value, { name }) => {
-      // console.log('value:', value, 'name:', name);
       setName(value.username);
       setEmail(value.email);
       setPassword(value.password);
@@ -290,7 +253,6 @@ function DemoRegister() {
               </FormControl>
             </Grid>
             <Grid item xs={12}>
-              {/* <Button variant="contained" size="small" onClick={() => handleRegister()}>註冊</Button> */}
               <Button variant="contained" size="small" type="submit">註冊</Button>
             </Grid>
           </Grid>

@@ -1,5 +1,5 @@
 import HomeNavbar from "@/components/HomeNavbar";
-import { Alert, Button, Chip, Grid, IconButton, InputAdornment, InputBase, InputLabel, Modal, OutlinedInput, TextField, alpha, createTheme, styled } from "@mui/material";
+import { Alert, Button, Chip, Container, Dialog, Grid, IconButton, InputAdornment, InputBase, InputLabel, Modal, OutlinedInput, TextField, alpha, createTheme, styled } from "@mui/material";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
@@ -28,6 +28,7 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import CheckIcon from '@mui/icons-material/Check';
 import { useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import DialogContent from '@mui/material/DialogContent';
 const theme = createTheme();
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -47,9 +48,9 @@ function CustomTabPanel(props: TabPanelProps) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
+        <Container>
+          <Box>{children}</Box>
+        </Container>
       )}
     </div>
   );
@@ -128,6 +129,7 @@ export default function Individual() {
   const [tall, setTall] = React.useState("");
   const [matchState, setMatchState] = React.useState(false);
   const [introduceList, setIntroduceList] = React.useState<matchIntroduce | null>(null);
+  const [haveIntroduce, setHaveIntroduce] = React.useState(false);
   //修改信箱
   const [reviseEmail, setReviseEmail] = React.useState(false);
   const [newEmail, setNewEmail] = React.useState("");
@@ -152,8 +154,6 @@ export default function Individual() {
   const [newPasswordError, setnewPasswordError] = React.useState('');
   const [confirmPasswordError, setConfirmPasswordError] = React.useState('');
 
-
-
  
 
 
@@ -162,13 +162,16 @@ export default function Individual() {
   };
 
   //配對自介
-  const [haveIntroduce, setHaveIntroduce] = React.useState(false);
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {//圖片預覽:這個事件物件表示檔案輸入框的變化，即使用者選擇了新的檔案或取消了選擇
     const file = event.target.files?.[0];//屬性取得使用者選擇的檔案清單。 由於文件輸入框可能為空，使用可選鏈運算符 ?避免空引用錯誤
     if (file) {//檢查是否選擇了文件
       setSelectedFile(file);
       const imageURL = URL.createObjectURL(file);//產生預覽圖片的 URL。
+      console.log("imageURL:",imageURL);
       setImageURL(imageURL);
+      if(revise){
+
+      }
     }
   };
   const handleChipClick = (chipLabel: string) => { 
@@ -181,7 +184,7 @@ export default function Individual() {
   };
   const handleSave = async() => {
     // (async () => {
-        setIntroduceModalOpen(false);
+      console.log("haveIntroduce", haveIntroduce);
         const formData = new FormData();
         formData.append('email', localStorage.getItem('email:') || '');
         formData.append('name', name);
@@ -200,15 +203,21 @@ export default function Individual() {
         // for (const [key, value] of formData.entries()) {
         //   console.log(key, value);
         // }
-      if(haveIntroduce!==true){
+        console.log("haveIntroduce", haveIntroduce);
+      if(!haveIntroduce){
+        console.log("saveMatchIntroduce");
         const introduceRes= await axios.post(process.env.REACT_APP_BASE_API + 'saveMatchIntroduce', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
+          
         });
+
         console.log("introduceRes:", introduceRes.data);
         setIntroduceList(introduceRes.data);
+        
       }else{
+        console.log("updataMatchIntroduce");
         const updateIntroduceRes= await axios.post(process.env.REACT_APP_BASE_API + 'updataMatchIntroduce', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -216,6 +225,7 @@ export default function Individual() {
         });
         setIntroduceList(updateIntroduceRes.data);
       }
+      setIntroduceModalOpen(false);
      
     // }
     // )(
@@ -399,20 +409,53 @@ export default function Individual() {
   useEffect(() => {
     (async () => {
       try {
-        const myArticleApi=process.env.REACT_APP_BASE_API + "getMyPostByEmail?email="+localStorage.getItem("email:");
-        console.log("myArticleApi:",myArticleApi);
-        const myArticleRes=await axios.get(myArticleApi);
-        console.log("myArticleRes:",myArticleRes);
-        setMyPostList(myArticleRes.data);
+        // const myArticleApi=process.env.REACT_APP_BASE_API + "getMyPostByEmail?email="+localStorage.getItem("email:");
+        // console.log("myArticleApi:",myArticleApi);
+        // const myArticleRes=await axios.get(myArticleApi);
+        // console.log("myArticleRes:",myArticleRes);
+        // setMyPostList(myArticleRes.data);
+        // setHaveIntroduce(false);
         const getUserIdApi = process.env.REACT_APP_BASE_API + "getUserIdByEmail?email=" + localStorage.getItem("email:");
-              const getUserIdRes = await axios.get(getUserIdApi);
-
+        const getUserIdRes = await axios.get(getUserIdApi);
         const api = process.env.REACT_APP_BASE_API + "getMatchIntroduce?userId=" + getUserIdRes.data;
         console.log("api:",api);
               const response = await axios.get(api);
               console.log("response:",response.data);
-              setIntroduceList(response.data);
-              setHaveIntroduce(true);
+              
+              // setHaveIntroduce(true);
+              // setIntroduceList(response.data);
+              // console.log(response.data!=null);
+              if(response.data){
+                setHaveIntroduce(true);
+                setIntroduceList(response.data);
+              }
+              else{
+                setHaveIntroduce(false);
+              }
+              console.log("useeffect  ",haveIntroduce);
+
+      } catch (error) {
+        //   setErrorAlert(true);
+        //   setTimeout(() => {
+        //   }, 2000);
+      }
+    })()
+  }, [])
+  useEffect(() => {
+    (async () => {
+      try {
+        const getUserIdApi = process.env.REACT_APP_BASE_API + "getUserIdByEmail?email=" + localStorage.getItem("email:");
+        const getUserIdRes = await axios.get(getUserIdApi);
+        const api = process.env.REACT_APP_BASE_API + "getMatchIntroduce?userId=" + getUserIdRes.data;
+        const response = await axios.get(api);
+        // console.log("response:",response.data);
+        if(response.data){
+          setHaveIntroduce(true);
+          setIntroduceList(response.data);
+        }
+        else{
+          setHaveIntroduce(false);
+        }
       } catch (error) {
         //   setErrorAlert(true);
         //   setTimeout(() => {
@@ -420,25 +463,7 @@ export default function Individual() {
         //   }, 2000);
       }
     })()
-  }, [])
-  // useEffect(() => {
-  //   (async () => {
-  //     try {
-  //       const getUserIdApi = process.env.REACT_APP_BASE_API + "getUserIdByEmail?email=" + localStorage.getItem("email:");
-  //       const getUserIdRes = await axios.get(getUserIdApi);
-  //       const api = process.env.REACT_APP_BASE_API + "getMatchIntroduce?userId=" + getUserIdRes.data;
-  //       const response = await axios.get(api);
-  //       console.log("response:",response.data);
-  //       setIntroduceList(response.data);
-  //       setHaveIntroduce(true);
-  //     } catch (error) {
-  //       //   setErrorAlert(true);
-  //       //   setTimeout(() => {
-  //       //     window.location.reload(); // 登入失敗後 2 秒重新加載頁面
-  //       //   }, 2000);
-  //     }
-  //   })()
-  // }, [introduceList])
+  }, [introduceList])
 
   return (
     <>
@@ -450,7 +475,7 @@ export default function Individual() {
               variant="scrollable" value={value} onChange={handleTabChange} aria-label="basic tabs example">
               <Tab label="我的文章" {...a11yProps(0)} />
               <Tab label="配對自介" {...a11yProps(1)} />
-              <Tab label="訊息" {...a11yProps(2)} />
+              {/* <Tab label="訊息" {...a11yProps(2)} /> */}
               <Tab label="配對結果" {...a11yProps(3)} />
               <Tab label="修改個人資料" {...a11yProps(4)} />
             </Tabs>
@@ -524,9 +549,9 @@ export default function Individual() {
                 {haveIntroduce && introduceList ? <Button variant="contained" size="small" onClick={() => clickReviseButton()}>更改</Button> : <Button variant="contained" size="small" onClick={() => clickAddButton()}>新增</Button>}
               </Box>
             </CustomTabPanel>
-            <CustomTabPanel value={value} index={2}>
+            {/* <CustomTabPanel value={value} index={2}>
               訊息
-            </CustomTabPanel>
+            </CustomTabPanel> */}
             <CustomTabPanel value={value} index={3}>
               尚無配對結果
             </CustomTabPanel>
@@ -554,11 +579,13 @@ export default function Individual() {
       </Box>
       <Modal
         open={introduceModalOpen}
+        // fullScre/en
         onClose={IntroduceModalClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
+        
+          <Box sx={style}>
           {introduceModalOpen && ( // 檢查modal是否存在
             <Box display="flex"
               alignItems="flex-start"
@@ -576,7 +603,7 @@ export default function Individual() {
               >
                 {imageURL && (
                   <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
-                    <img src={revise?introduceList?.img:imageURL} alt="Uploaded" style={{ width: '100%', height: '100%', objectFit: 'fill' }} />
+                    <img src={imageURL} alt="Uploaded" style={{ width: '100%', height: '100%', objectFit: 'fill' }} />
                     <IconButton
                       sx={{ position: 'absolute', top: 0, right: 0, color: 'white' }}
                       onClick={() => setImageURL('')}// 清除預覽照片
@@ -695,7 +722,7 @@ export default function Individual() {
                     <FormControlLabel value="false" control={<Radio />} label="否" />
                   </RadioGroup>
                   <Box display="flex" justifyContent="flex-end" width="200px">
-                    <Button variant="contained" size="small" onClick={() => handleSave()}>儲存</Button>
+                    <Button variant="contained" size="small" onClick={(e) => handleSave()}>儲存</Button>
 
                   </Box>
                   {/* </FormControl> */}
@@ -705,7 +732,7 @@ export default function Individual() {
             // </div>
           )}
 
-        </Box>
+          </Box>
       </Modal>
       <Modal
         open={reviseEmail}

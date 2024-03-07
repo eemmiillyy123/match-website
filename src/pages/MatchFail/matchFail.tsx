@@ -30,7 +30,6 @@ function MatchFail() {
                     <Button variant={buttonIsHovered ? "contained" : "outlined"} onMouseEnter={() => setButtonIsHovered(true)} onMouseLeave={() => setButtonIsHovered(false)} onClick={()=>headToWrite()}>前往填寫</Button>
                 </Box>
             </Box>
-
         </ThemeProvider>
     )
 }

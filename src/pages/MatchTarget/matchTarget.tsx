@@ -95,7 +95,7 @@ function MatchTarget() {
                         
                     </Typography>
                     <Typography variant="h6" sx={{ marginTop:"40px" }}>
-                        配對成功即可成為好友開啟聊天!
+                        雙方都按願意就配對成功!
                     </Typography>
                     <Typography variant="h6">
                         請選擇是否願意與對方配對:

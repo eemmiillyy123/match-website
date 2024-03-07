@@ -112,10 +112,7 @@ export default function Cardblock({ list }) {
       }
     })()
   }
-  // useEffect(() => {
-  //   if (modal === true) {
-  //   }
-  // },[modal]);
+
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -278,7 +275,6 @@ export default function Cardblock({ list }) {
             )}
           </Box> */}
         </Modal>
-
       </ThemeProvider>
     </>
   );
