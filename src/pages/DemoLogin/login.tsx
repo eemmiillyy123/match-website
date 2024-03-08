@@ -7,7 +7,7 @@ import Grid from '@mui/material/Grid'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
-import { Link, NavLink, Search, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import { useForm } from 'react-hook-form';
@@ -27,37 +27,15 @@ function DemoLogin() {
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
-  // const handleLogin = () => {
-  //   (async () => {
-  //     const api = process.env.REACT_APP_BASE_API + "user/login";
-  //     const response = await axios.post(api, {
-  //       email: email,
-  //       password: password
-  //     })
-  //     console.log('response', response);
-  //     if (response.request.status === 200) {
-  //       console.log('登入成功');
-  //       setShowAlert(true);
-  //       setTimeout(()=>{
-  //         navigate('/home');
-  //       },3000)
-  //     }
-  //   })()
-  // }
-  // const handleClickShowPassword = () => setShowPassword((show) => !show);
-  // const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-  //   event.preventDefault();
-  // };
+
   useEffect(() => {
     const subscription = watch((value, { name }) => {
-      // console.log('value:', value, 'name:', name);;
       setEmail(value.email);
       setPassword(value.password);
     })
-    //在useEfect如果有監聽的行為要補上取消監聽行為避免重複觸發
-    console.log(subscription);//裡面有一個unsubscribe:取消訂閱(監聽)
-    return () => { subscription.unsubscribe() }
+    return () => { subscription.unsubscribe() }//在useEfect如果有監聽的行為要補上取消監聽行為避免重複觸發
   }, [watch])
+
   const onSubmit = (data: any) => {
     (async () => {
       try{
@@ -90,9 +68,6 @@ function DemoLogin() {
           <Typography variant="h4" sx={{ flexGrow: 1 }}>
             AppBar
           </Typography>
-          {/* <NavLink className="nav-link" to="/register">註冊</NavLink>
-               {/* <Button color = "inherit" onClick={handleRegister}> 註冊 </Button> }
-               <Button color = "inherit"> 登入 </Button> */}
         </Toolbar>
       </AppBar>
       <CssBaseline />
@@ -113,7 +88,6 @@ function DemoLogin() {
         justifyContent="center"
       >
         <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: '400px' }}>
-          {/* <FormControl> */}
           <Grid container direction="column" spacing={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Grid item xs={12} sx={{ textAlign: 'center' }}>
               <p>還沒有帳號嗎? <a href="/demo/register">註冊</a></p>
@@ -137,11 +111,6 @@ function DemoLogin() {
                   })}
                   error={!!errors.email}
                   helperText={errors.email ? (errors.email.message as string | undefined) : ''}
-                // sx={{ width: '100%' }}
-                // sx={{ width: 'calc(100% + 48px)' }}
-                // onChange={(e) => setEmail(e.target.value)}
-                // value={email}
-                // required
                 />
               </FormControl>
             </Grid>
@@ -179,11 +148,7 @@ function DemoLogin() {
                     }
                   })}
                   error={!!errors.password}
-                // helperText={errors.password ? (errors.password.message as string | undefined) : ''}
-
                 />
-                {/* {errors.password && <span>{errors.password.message as string}</span>} */}
-                {/* {errors.password ? (errors.password.message as string | undefined) : ''} */}
                 {errors.password && (
                   <Typography variant="body2" color="error" sx={{ marginTop:'4px',marginX:'14px',fontSize:'0.75rem' }}>
                     {errors.password && <span>{errors.password.message as string}</span>}
@@ -193,14 +158,10 @@ function DemoLogin() {
 
             </Grid>
             <Grid item xs={12} sx={{ textAlign: 'right' }}>
-              {/* <Button variant="contained" size="small" onClick={() => handleLogin()}>登入</Button> */}
               <Button variant="contained" size="small" type="submit">登入</Button>
             </Grid>
           </Grid>
         </form>
-        {/* </div> */}
-        {/* </FormControl> */}
-        {/* </Box> */}
       </Box>
     </ThemeProvider>
   )

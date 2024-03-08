@@ -1,9 +1,9 @@
-import { Alert, AppBar, Button, FormHelperText, IconButton, Input, InputAdornment, InputLabel, OutlinedInput, TextField, Toolbar, Typography } from '@mui/material'
+import { Alert, AppBar, Button, FormHelperText, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField, Toolbar, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
 import Grid from '@mui/material/Grid'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-import { Search, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { FormControl } from '@mui/material';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -21,6 +21,7 @@ function DemoRegister() {
   const [errorAlert, setErrorAlert] = useState(false);
   const { register, handleSubmit, formState: { errors }, watch } = useForm();
   const navigate = useNavigate();
+
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -33,8 +34,6 @@ function DemoRegister() {
       setEmail(value.email);
       setPassword(value.password);
     })
-    //在useEfect如果有監聽的行為要補上取消監聽行為避免重複觸發
-    console.log(subscription);//裡面有一個unsubscribe:取消訂閱(監聽)
     return () => { subscription.unsubscribe() }
   }, [watch])
 
@@ -56,7 +55,6 @@ function DemoRegister() {
             navigate('/login');
           }, 3000)
         }
-        console.log(response);
       }catch(error){
         setErrorAlert(true);
       }
@@ -89,8 +87,6 @@ function DemoRegister() {
           </Alert>
         )}
         <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%', maxWidth: '400px' }}>
-          {/* <FormControl> */}
-          {/* <form action='' onSubmit={handleSubmit(onSubmit)}> */}
           <Grid container direction="column" spacing={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Grid item xs={12} sx={{ textAlign: 'center' }}>
               <p>已經有帳號了嗎? <a href="/demo/login">登入</a></p>
@@ -104,9 +100,6 @@ function DemoRegister() {
                 {...register('username', { required: true })}
                 error={!!errors.username}
                 helperText={errors.username ? '使用者名稱為必填' : ''}
-              // onChange={e => setName(e.target.value)}
-              // value={name}
-              // required
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -127,9 +120,6 @@ function DemoRegister() {
                 })}
                 error={!!errors.email}
                 helperText={errors.email ? (errors.email.message as string | undefined) : ''}
-              // onChange={e => setEmail(e.target.value)}
-              // value={email}
-              // required
               />
             </Grid>
             <Grid item xs={12}>
@@ -169,41 +159,13 @@ function DemoRegister() {
                     }
                   })}
                   error={!!errors.password}
-                // helperText={errors.password ? (errors.password.message as string | undefined) : ''}
                 />
-                {/* {errors.password && <span>{errors.password.message as string}</span>} */}
-                {/* {errors.password ? (errors.password.message as string | undefined) : ''} */}
                 {errors.password && (
                   <Typography variant="body2" color="error" sx={{ marginTop: '4px', marginX: '14px', fontSize: '0.75rem' }}>
                     {errors.password && <span>{errors.password.message as string}</span>}
                   </Typography>
                 )}
               </FormControl>
-              {/* <TextField
-                type="password"
-                variant='outlined'
-                label="密碼"
-                size="small"
-                {...register('password', {
-                  required: {
-                    value: true,
-                    message: '密碼為必填'
-                  },
-                  minLength: {
-                    value: 6,
-                    message: '密碼不少於 6 碼',
-                  },
-                  maxLength: {
-                    value: 12,
-                    message: '密碼不大於 12 碼',
-                  }
-                })}
-                error={!!errors.password}
-                helperText={errors.password ? (errors.password.message as string | undefined) : ''}
-              // onChange={e => setPassword(e.target.value)}
-              // value={password}
-              // required
-              /> */}
             </Grid>
             <Grid item xs={12}>
               <FormControl sx={{ width: '25ch' }} variant="outlined" size='small'>
@@ -240,11 +202,7 @@ function DemoRegister() {
                       validate: (value) => value === password || '密碼和再次輸入密碼需一致'
                     })}
                     error={!!errors.confirmPassword} 
-                  // helperText={errors.password ? (errors.password.message as string | undefined) : ''}
-
                   />
-                  {/* {errors.password && <span>{errors.password.message as string}</span>} */}
-                  {/* {errors.password ? (errors.password.message as string | undefined) : ''} */}
                   {errors.confirmPassword && (
                     <Typography variant="body2" color="error" sx={{ marginTop: '4px', marginX: '14px', fontSize: '0.75rem' }}>
                       {errors.confirmPassword && <span>{errors.confirmPassword.message as string}</span>}
@@ -257,7 +215,6 @@ function DemoRegister() {
             </Grid>
           </Grid>
         </form>
-        {/* </FormControl> */}
       </Box>
     </ThemeProvider>
   )
