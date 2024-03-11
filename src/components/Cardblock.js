@@ -11,7 +11,6 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import CommentIcon from '@mui/icons-material/Comment';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { ThemeProvider, createTheme } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Box from '@mui/material/Box';
@@ -22,21 +21,9 @@ import Modal from '@mui/material/Modal';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import axios from "axios";
 import { useEffect } from 'react'
+
 const theme = createTheme();
-const ExpandMore = styled((props) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-  transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
-  marginLeft: 'auto',
-  transition: theme.transitions.create('transform', {
-    duration: theme.transitions.duration.shortest,
-  }),
-}));
-
-
-
-
+//卡片樣式
 const style = {
   position: 'absolute',
   top: '50%',
@@ -130,11 +117,11 @@ export default function Cardblock({ list }) {
                   </Typography>
                 </Box>
 
-                <Tooltip title="Open settings" style={{ paddingRight: '0px' }}>
+                {/* <Tooltip title="Open settings" style={{ paddingRight: '0px' }}>
                   <IconButton onClick={handlePostMenu} aria-label="settings">
                     <MoreVertIcon />
                   </IconButton>
-                </Tooltip>
+                </Tooltip> */}
 
               </CardContent>
               <Box sx={{ width: '400px', padding: "0 1rem 0 1rem", display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -196,12 +183,11 @@ export default function Cardblock({ list }) {
                   component="img"
                   image={item.img}
                   alt="upload image"
-                  sx={{ maxHeight: '25%', maxWidth: '25%', objectFit: "fit" }}
-                // style={'object':'fit';}
+                  sx={{ maxHeight: '90px', maxWidth: '110px', objectFit: "fit" }}
                 />)}
               </Box>
 
-              <Menu
+              {/* <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleCloseMenu}
@@ -216,7 +202,7 @@ export default function Cardblock({ list }) {
               >
                 <MenuItem onClick={handleCloseMenu}>編輯</MenuItem>
                 <MenuItem onClick={handleCloseMenu}>刪除</MenuItem>
-              </Menu>
+              </Menu> */}
             </Card>
           </Box>
         ))}
@@ -226,18 +212,6 @@ export default function Cardblock({ list }) {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          {/* {modal && ( // 添加條件渲染
-            <Box sx={style}>
-              {modal.selectBoard}
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-                {modal.title}
-              </Typography>
-              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                {modal.context}
-                {modal.img && <img src={modal.img} alt='img' style={{ maxWidth: '50%', maxHeight: '50%' }}></img>}
-              </Typography>
-            </Box>
-          )} */}
           <Box sx={style}>
             {modal && ( // 檢查modal是否存在
               <div style={{ maxHeight: '80vh', overflowY: 'auto' }}> {/* 添加滾動條 */}
@@ -260,20 +234,6 @@ export default function Cardblock({ list }) {
               </div>
             )}
           </Box>
-          {/* <Box sx={style}>
-            {modal && ( 
-              <div style={{ maxHeight: '80vh', overflow: 'hidden' }}>
-                {modal.selectBoard}
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                  {modal.title}
-                </Typography>
-                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                  {modal.context}
-                  {modal.img && <img src={modal.img} alt='img' style={{ maxWidth: '50%', maxHeight: '50%' }}></img>}
-                </Typography>
-              </div>
-            )}
-          </Box> */}
         </Modal>
       </ThemeProvider>
     </>

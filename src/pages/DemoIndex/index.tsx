@@ -2,12 +2,8 @@ import { AppBar, Button, IconButton, Toolbar, Typography, createStyles, makeStyl
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import CssBaseline from '@mui/material/CssBaseline'
-import Grid from '@mui/material/Grid'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-import {  NavLink, Search} from 'react-router-dom'
 import Link from '@mui/material/Link';
-import ImageList from '@mui/material/ImageList';
-import ImageListItem from '@mui/material/ImageListItem';
 
 const theme = createTheme();
 
@@ -26,33 +22,6 @@ function DemoIndex() {
             </Toolbar>
          </AppBar>
       </Box>
-      {/* <Box
-      sx={{
-        backgroundImage: 'url("https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat',
-        height: '700px', // 背景的高度
-        width: '100%', // 背景的寬度
-        position: 'relative',
-        opacity:0.6
-      }}
-    >
-      <Typography
-        variant="h4"
-        sx={{
-          position: 'absolute',
-          top: '20%',
-          left: '30%',
-          transform: 'translate(-50%, -50%)',
-          color: 'white', // 文字的顏色
-        }}
-      >
-       <p>MateSpark</p> 
-        <Link underline="none" href="/demo/register" color = "inherit" marginRight={2}>註冊</Link>
-        <br/>
-        <Link underline="none" href="/demo/login" color = "inherit" >登入</Link>
-      </Typography>
-    </Box> */}
       <Container component='main' maxWidth='xl'>
         <CssBaseline />
         <Box
@@ -77,7 +46,7 @@ function DemoIndex() {
           }}
         >
             <img src="https://i.pinimg.com/474x/a5/f9/66/a5f9662d9cb35efbf12be3c5030c3545.jpg" alt=""  style={{width:'350px',height:'auto',marginRight:'50px'}}/>
-            <p style={{ width: '300px' }}>午夜12點，系統會根據您的興趣、部門等，為您精心挑選潛在的夥伴，選擇配對即可進入聊天室進行更深度的交流!</p> 
+            <p style={{ width: '300px' }}>午夜12點，系統會根據您的興趣等，為您精心挑選潛在的夥伴，選擇配對即可進入聊天室進行更深度的交流!</p> 
         </Box>
         <Box
           sx={{

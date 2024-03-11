@@ -30,7 +30,30 @@ function MatchTarget() {
             userAId: thisIntroduce?.userId,
             userBId: anotherIntroduce?.userId
         });
-        navigate("/matchResult")
+        setTimeout(() => {
+            (async () => {
+                const res = axios.post(process.env.REACT_APP_BASE_API + "confirmMatchResult", {
+                    userAId: thisIntroduce?.userId,
+                    userBId: anotherIntroduce?.userId
+                });
+                // console.log(res.data)
+                if(await res){
+                    navigate("/matchSuccess")
+                }
+                else{
+                    navigate("/matchUnsuccess")
+                }
+            })()
+        }, 40000); 
+        
+    }
+    const handleNo =async () => {
+        const noApi = process.env.REACT_APP_BASE_API + "notwillingToMatch";
+        const getUserIdRes = axios.post(noApi, {
+            userAId: thisIntroduce?.userId,
+            userBId: anotherIntroduce?.userId
+        });
+        navigate("/matchUnsuccess")
     }
     useEffect(() => {
         (async () => {
@@ -48,30 +71,30 @@ function MatchTarget() {
                 const matchRes = await axios.post(matchApi, res.data);
                 console.log("matchRes:", matchRes.data);
                 if (matchRes.status === 200) {
-                    if (!matchRes.data) {
-                        setWaitForMatch(true);
-                        console.log("waitForMatch=",waitForMatch);
-                        const interval = setInterval(async () => {
-                            try {
-                                // 發送請求檢查是否有新的配對資料
-                                const response = await axios.post(process.env.REACT_APP_BASE_API + "checkForNewMatches",res.data,
-                                {
-                                    headers: {
-                                      'Content-Type': 'application/json'
-                                    }
-                                  });
+                    // if (!matchRes.data) {
+                    //     setWaitForMatch(true);
+                    //     console.log("waitForMatch=",waitForMatch);
+                    //     // const interval = setInterval(async () => {
+                    //     //     try {
+                    //     //         // 發送請求檢查是否有新的配對資料
+                    //     //         // const response = await axios.post(process.env.REACT_APP_BASE_API + "checkForNewMatches",res.data,
+                    //     //         // {
+                    //     //         //     headers: {
+                    //     //         //       'Content-Type': 'application/json'
+                    //     //         //     }
+                    //     //         //   });
                                 
-                                // 檢查後端回傳的資料，如果有新的配對資料，設置狀態為等待配對
-                                if (response.data.hasNewMatches) {
-                                    console.log(response.data);
-                                    setWaitForMatch(false);
-                                    setAnotherIntroduce(response.data);
-                                }
-                            } catch (error) {
-                                console.error('Error checking for new matches:', error);
-                            }
-                        }, 1000); // 每5秒檢查一次，您可以根據需求調整間隔時間
-                    }
+                    //     //         // // 檢查後端回傳的資料，如果有新的配對資料，設置狀態為等待配對
+                    //     //         // if (response.data.hasNewMatches) {
+                    //     //         //     console.log(response.data);
+                    //     //         //     setWaitForMatch(false);
+                    //     //         //     setAnotherIntroduce(response.data);
+                    //     //         // }
+                    //     //     } catch (error) {
+                    //     //         console.error('Error checking for new matches:', error);
+                    //     //     }
+                    //     // }, 1000); // 每5秒檢查一次，您可以根據需求調整間隔時間
+                    // }
                     setMatchSuccess(true);
                     setAnotherIntroduce(matchRes.data);
                 }
@@ -104,7 +127,6 @@ function MatchTarget() {
                     <Box >
                         <Typography variant="h6" sx={{ verticalAlign: 'top' }}>
                             以下為對方的資料:
-                            {/* {matchSuccess ? ("恭喜你和" + anotherIntroduce?.name + "配對成功!") : "配對失敗"} */}
                         </Typography>
                         <img src={anotherIntroduce?.img} alt="" width="210px" height="260px" />
                         <Typography variant="body1" sx={{ verticalAlign: 'top' }}>
@@ -134,10 +156,9 @@ function MatchTarget() {
                             請選擇是否願意與對方配對:
                         </Typography>
                         <Button variant={yesIsHovered ? "contained" : "outlined"} onMouseEnter={() => setYesIsHovered(true)} onMouseLeave={() => setYesIsHovered(false)} sx={{ marginRight: "20px" }} onClick={() => handleYes()}>願意</Button>
-                        <Button variant={noIsHovered ? "contained" : "outlined"} onMouseEnter={() => setNoIsHovered(true)} onMouseLeave={() => setNoIsHovered(false)}>不願意</Button>
+                        <Button variant={noIsHovered ? "contained" : "outlined"} onMouseEnter={() => setNoIsHovered(true)} onMouseLeave={() => setNoIsHovered(false)} onClick={() => handleNo()}>不願意</Button>
                     </Box>)}
                 </Box>
-
         </ThemeProvider>
     )
 }

@@ -17,7 +17,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CreateIcon from '@mui/icons-material/Create';
-import {  ThemeProvider,  } from '@mui/material';
+import { ThemeProvider, } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -26,63 +26,67 @@ import ListItemText from '@mui/material/ListItemText';
 import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
 import ContactIcon from '@mui/icons-material/ContactSupport';
-import { Container, Divider, Drawer} from '@mui/material';
+import { Container, Divider, Drawer } from '@mui/material';
 import axios from 'axios';
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
     backgroundColor: alpha(theme.palette.common.white, 0.15),
     '&:hover': {
-      backgroundColor: alpha(theme.palette.common.white, 0.25),
+        backgroundColor: alpha(theme.palette.common.white, 0.25),
     },
     marginRight: theme.spacing(2),
     marginLeft: 0,
     width: '100%',
     [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(3),
-      width: 'auto',
+        marginLeft: theme.spacing(3),
+        width: 'auto',
     },
 }));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
-padding: theme.spacing(0, 2),
-height: '100%',
-position: 'absolute',
-pointerEvents: 'none',
-display: 'flex',
-alignItems: 'center',
-justifyContent: 'center',
+    padding: theme.spacing(0, 2),
+    height: '100%',
+    position: 'absolute',
+    pointerEvents: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-color: 'inherit',
-'& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-    width: '20ch',
+    color: 'inherit',
+    '& .MuiInputBase-input': {
+        padding: theme.spacing(1, 1, 1, 0),
+        // vertical padding + font size from searchIcon
+        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+        transition: theme.transitions.create('width'),
+        width: '100%',
+        [theme.breakpoints.up('md')]: {
+            width: '20ch',
+        },
     },
-},
 }));
-// export default function HomeNavbar({menuId,handleProfileMenuOpen,mobileMenuId,handleMobileMenuOpen,renderMobileMenu,renderMenu}){
-    export default function HomeNavbar(){
-         // Drawer
+export default function HomeNavbar() {
+    // Drawer
     const [mobileOpen, setMobileOpen] = React.useState(false);
-    const [selectBoard,setSelectBoard]=React.useState("");
+    const [selectBoard, setSelectBoard] = React.useState("");
+    const [searchtext, setSearchtext] = React.useState("");
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+    const navigate = useNavigate();
+
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
-    const [searchtext,setSearchtext]=React.useState("");
-    const handleInputChange= (event) => {
+
+    const handleInputChange = (event) => {
         setSearchtext(event.target.value);
-      };
-    const handleBoard=(s)=>{
+    };
+    const handleBoard = (s) => {
         (async () => {
-            try{
-                console.log("s:",s);
+            try {
+                console.log("s:", s);
                 setSelectBoard(s);
                 // const api = process.env.REACT_APP_BASE_API + "selectPost/?board="+s;
                 // console.log(api);
@@ -92,23 +96,17 @@ color: 'inherit',
                 //     console.log('成功');
                 // //   setShowAlert(true);
                 // //   localStorage.setItem('email:', email);
-                    navigate('/selectPost?board='+s+'&search='+searchtext);
-            }catch(error){
-                // setErrorAlert(true);
-                // setTimeout(() => {
-                //   window.location.reload(); // 登入失敗後 2 秒重新加載頁面
-                // }, 2000);
+                navigate('/selectPost?board=' + s + '&search=' + searchtext);
+            } catch (error) {
             }
         })()
     }
-    const handleKeyDown = (event) => {
-        console.log("selectBoard:",selectBoard);
+    const handleKeyDown = (event) => {//處理 Enter 鍵被按下的情況
+        console.log("selectBoard:", selectBoard);
         if (event.keyCode === 13) {
-            navigate('/selectPost?board='+selectBoard+'&search='+searchtext);
-        //   // 在這裡處理 Enter 鍵被按下的情況
-        //   console.log('Enter 鍵被按下');
+            navigate('/selectPost?board=' + selectBoard + '&search=' + searchtext);
         }
-      };
+    };
     const drawer = (
         <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
             <Typography variant="h6" sx={{ my: 2 }}>
@@ -116,19 +114,19 @@ color: 'inherit',
             </Typography>
             <Divider />
             <List>
-                <ListItem button onClick={()=>handleBoard("音樂看板")}>
+                <ListItem button onClick={() => handleBoard("音樂看板")}>
                     <ListItemIcon>
                         <HomeIcon />
                     </ListItemIcon>
                     <ListItemText primary="音樂看板" />
                 </ListItem>
-                <ListItem button onClick={()=>handleBoard("星座看板")}>
+                <ListItem button onClick={() => handleBoard("星座看板")}>
                     <ListItemIcon>
                         <InfoIcon />
                     </ListItemIcon>
                     <ListItemText primary="星座看板" />
                 </ListItem>
-                <ListItem button onClick={()=>handleBoard("NEC員工專屬看板")}>
+                <ListItem button onClick={() => handleBoard("NEC員工專屬看板")}>
                     <ListItemIcon>
                         <ContactIcon />
                     </ListItemIcon>
@@ -138,10 +136,8 @@ color: 'inherit',
         </Box>
     );
 
-    
-    const navigate=useNavigate();
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+
+
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -149,19 +145,22 @@ color: 'inherit',
         setMobileMoreAnchorEl(null);
     };
     const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+    const signOut = () => {
         localStorage.setItem('email:', "");
         navigate('/login')
-    };
+    }
     const handleMobileMenuOpen = (event) => {
         setMobileMoreAnchorEl(event.currentTarget);
     };
-    const handlePerson=()=>{
+    const handlePerson = () => {
         navigate('/individual')
     }
-    const handlePageToHome=()=>{
+    const handlePageToHome = () => {
         navigate('/home')
     }
-    const handleMatch=()=>{
+    const handleMatch = () => {
         navigate('/match')
     }
     const isMenuOpen = Boolean(anchorEl);
@@ -183,13 +182,8 @@ color: 'inherit',
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            {/* <MenuItem onClick={handleMenuClose}>我的文章</MenuItem>
-            <MenuItem onClick={handleMenuClose}>配對自介</MenuItem>
-            <MenuItem onClick={handleMenuClose}>訊息</MenuItem>
-            <MenuItem onClick={handleMenuClose}>配對</MenuItem>
-            <MenuItem onClick={handleMenuClose}>修改個人資料</MenuItem> */}
-            <MenuItem onClick={handlePerson}>個人</MenuItem> 
-            <MenuItem onClick={handleMenuClose}>登出</MenuItem>
+            <MenuItem onClick={handlePerson}>個人</MenuItem>
+            <MenuItem onClick={signOut}>登出</MenuItem>
         </Menu>
     );
     const pathToAddPost = () => {
@@ -264,12 +258,12 @@ color: 'inherit',
         </Menu>
 
     );
-      
+
     return (
         <Box sx={{ flexGrow: 1 }}>
-                <AppBar position="static">
+            <AppBar position="static">
                 <Toolbar>
-                        <IconButton
+                    <IconButton
                         size="large"
                         edge="start"
                         color="inherit"
@@ -283,7 +277,7 @@ color: 'inherit',
                         variant="h6"
                         noWrap
                         component="div"
-                        sx={{ display: { xs: 'none', sm: 'block' }}}
+                        sx={{ display: { xs: 'none', sm: 'block' } }}
                         onClick={handlePageToHome}
                     >
                         首頁
@@ -294,19 +288,19 @@ color: 'inherit',
                         </SearchIconWrapper>
                         <StyledInputBase
                             placeholder="Search…"
-                            inputProps={{ 'aria-label': 'search' }} 
+                            inputProps={{ 'aria-label': 'search' }}
                             value={searchtext}
-              onChange={handleInputChange}
-                            onKeyDown={handleKeyDown}/>
+                            onChange={handleInputChange}
+                            onKeyDown={handleKeyDown} />
                     </Search>
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
                             <Badge color="error">
-                                <PersonAddIcon onClick={handleMatch}/>
+                                <PersonAddIcon onClick={handleMatch} />
                             </Badge>
                         </IconButton>
-                        <IconButton size="large" aria-label="show 4 new mails" color="inherit" onClick={()=>pathToAddPost()}>
+                        <IconButton size="large" aria-label="show 4 new mails" color="inherit" onClick={() => pathToAddPost()}>
                             <Badge color="error">
                                 <CreateIcon />
                             </Badge>
@@ -353,15 +347,14 @@ color: 'inherit',
             </AppBar>
             {renderMobileMenu}
             {renderMenu}
-            {/* 渲染抽屉菜单 */}
-                <Drawer
-                    variant="temporary"
-                    anchor="left"
-                    open={mobileOpen}
-                    onClose={handleDrawerToggle}
-                >
-                    {drawer}
-                </Drawer>
+            <Drawer
+                variant="temporary"
+                anchor="left"
+                open={mobileOpen}
+                onClose={handleDrawerToggle}
+            >
+                {drawer}
+            </Drawer>
         </Box>
     );
 }

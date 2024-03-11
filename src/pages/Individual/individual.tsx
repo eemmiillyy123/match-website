@@ -116,7 +116,7 @@ const chipArray = ["唱歌", "跳舞", "旅遊", "看書", "烘焙", "烹飪", "
 
 export default function Individual() {
   //我的文章
-  const [myPostList,setMyPostList]=React.useState<Post[]>([]);
+  const [myPostList, setMyPostList] = React.useState<Post[]>([]);
   //配對自介
   const [value, setValue] = React.useState(1);
   const [imageURL, setImageURL] = React.useState('');
@@ -154,7 +154,7 @@ export default function Individual() {
   const [newPasswordError, setnewPasswordError] = React.useState('');
   const [confirmPasswordError, setConfirmPasswordError] = React.useState('');
 
- 
+
 
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -167,66 +167,66 @@ export default function Individual() {
     if (file) {//檢查是否選擇了文件
       setSelectedFile(file);
       const imageURL = URL.createObjectURL(file);//產生預覽圖片的 URL。
-      console.log("imageURL:",imageURL);
+      console.log("imageURL:", imageURL);
       setImageURL(imageURL);
-      if(revise){
+      if (revise) {
 
       }
     }
   };
-  const handleChipClick = (chipLabel: string) => { 
+  const handleChipClick = (chipLabel: string) => {
     if (!selectedChips.includes(chipLabel)) {
       setSelectedChips([...selectedChips, chipLabel]);
     }
   };
-  const handleChipDelete = (chipLabel: string) => { 
+  const handleChipDelete = (chipLabel: string) => {
     setSelectedChips(selectedChips.filter((chip) => chip !== chipLabel));
   };
-  const handleSave = async() => {
+  const handleSave = async () => {
     // (async () => {
-      console.log("haveIntroduce", haveIntroduce);
-        const formData = new FormData();
-        formData.append('email', localStorage.getItem('email:') || '');
-        formData.append('name', name);
-        formData.append('companyName', companyName);
-        formData.append('department', department);
-        formData.append('tall', tall);
-        formData.append('habit', selectedChips.join(','));
-        formData.append('matchState', matchState.toString());
-        if (selectedFile) {
-          formData.append('file', selectedFile);
-        }
-        console.log("formData:", formData);
-        formData.forEach((value, key) => {
-          console.log(key, value);
-        });
-        // for (const [key, value] of formData.entries()) {
-        //   console.log(key, value);
-        // }
-        console.log("haveIntroduce", haveIntroduce);
-      if(!haveIntroduce){
-        console.log("saveMatchIntroduce");
-        const introduceRes= await axios.post(process.env.REACT_APP_BASE_API + 'saveMatchIntroduce', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-          
-        });
+    console.log("haveIntroduce", haveIntroduce);
+    const formData = new FormData();
+    formData.append('email', localStorage.getItem('email:') || '');
+    formData.append('name', name);
+    formData.append('companyName', companyName);
+    formData.append('department', department);
+    formData.append('tall', tall);
+    formData.append('habit', selectedChips.join(','));
+    formData.append('matchState', matchState.toString());
+    if (selectedFile) {
+      formData.append('file', selectedFile);
+    }
+    console.log("formData:", formData);
+    formData.forEach((value, key) => {
+      console.log(key, value);
+    });
+    // for (const [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
+    console.log("haveIntroduce", haveIntroduce);
+    if (!haveIntroduce) {
+      console.log("saveMatchIntroduce");
+      const introduceRes = await axios.post(process.env.REACT_APP_BASE_API + 'saveMatchIntroduce', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
 
-        console.log("introduceRes:", introduceRes.data);
-        setIntroduceList(introduceRes.data);
-        
-      }else{
-        console.log("updataMatchIntroduce");
-        const updateIntroduceRes= await axios.post(process.env.REACT_APP_BASE_API + 'updataMatchIntroduce', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        setIntroduceList(updateIntroduceRes.data);
-      }
-      setIntroduceModalOpen(false);
-     
+      });
+
+      console.log("introduceRes:", introduceRes.data);
+      setIntroduceList(introduceRes.data);
+
+    } else {
+      console.log("updataMatchIntroduce");
+      const updateIntroduceRes = await axios.post(process.env.REACT_APP_BASE_API + 'updataMatchIntroduce', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      setIntroduceList(updateIntroduceRes.data);
+    }
+    setIntroduceModalOpen(false);
+
     // }
     // )(
 
@@ -242,7 +242,7 @@ export default function Individual() {
     setMatchState((introduceList as matchIntroduce).matchState);
     setName((introduceList as matchIntroduce).name);
     setTall((introduceList as matchIntroduce).tall);
-    console.log("imageURL:",imageURL);
+    console.log("imageURL:", imageURL);
   };
   const clickAddButton = () => {
     setIntroduceModalOpen(true);
@@ -334,7 +334,7 @@ export default function Individual() {
   }
 
   //密碼
-  const handleClickShowPassword = () => setShowPassword((show:boolean) => !show);
+  const handleClickShowPassword = () => setShowPassword((show: boolean) => !show);
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
@@ -378,7 +378,7 @@ export default function Individual() {
   }
   const handleRevisePassword = () => {
     (async () => {
-      console.log("newPassword=",newPassword);
+      console.log("newPassword=", newPassword);
       const response = await axios.get(process.env.REACT_APP_BASE_API + 'user/revisePassword?newPassword=' + newPassword + "&email=" + localStorage.getItem("email:"));
       if (response.request.status === 200) {
         setReviseSuccess(true);
@@ -405,34 +405,34 @@ export default function Individual() {
       console.error("Error occurred while verifying password:", error);
     }
   }
- 
+
   useEffect(() => {
     (async () => {
       try {
-        // const myArticleApi=process.env.REACT_APP_BASE_API + "getMyPostByEmail?email="+localStorage.getItem("email:");
-        // console.log("myArticleApi:",myArticleApi);
-        // const myArticleRes=await axios.get(myArticleApi);
-        // console.log("myArticleRes:",myArticleRes);
-        // setMyPostList(myArticleRes.data);
-        // setHaveIntroduce(false);
+        const myArticleApi = process.env.REACT_APP_BASE_API + "getMyPostByEmail?email=" + localStorage.getItem("email:");
+        console.log("myArticleApi:", myArticleApi);
+        const myArticleRes = await axios.get(myArticleApi);
+        console.log("myArticleRes:", myArticleRes);
+        setMyPostList(myArticleRes.data);
+
         const getUserIdApi = process.env.REACT_APP_BASE_API + "getUserIdByEmail?email=" + localStorage.getItem("email:");
         const getUserIdRes = await axios.get(getUserIdApi);
         const api = process.env.REACT_APP_BASE_API + "getMatchIntroduce?userId=" + getUserIdRes.data;
-        console.log("api:",api);
-              const response = await axios.get(api);
-              console.log("response:",response.data);
-              
-              // setHaveIntroduce(true);
-              // setIntroduceList(response.data);
-              // console.log(response.data!=null);
-              if(response.data){
-                setHaveIntroduce(true);
-                setIntroduceList(response.data);
-              }
-              else{
-                setHaveIntroduce(false);
-              }
-              console.log("useeffect  ",haveIntroduce);
+        console.log("api:", api);
+        const response = await axios.get(api);
+        console.log("response:", response.data);
+
+        // setHaveIntroduce(true);
+        // setIntroduceList(response.data);
+        // console.log(response.data!=null);
+        if (response.data) {
+          setHaveIntroduce(true);
+          setIntroduceList(response.data);
+        }
+        else {
+          setHaveIntroduce(false);
+        }
+        console.log("useeffect  ", haveIntroduce);
 
       } catch (error) {
         //   setErrorAlert(true);
@@ -449,11 +449,11 @@ export default function Individual() {
         const api = process.env.REACT_APP_BASE_API + "getMatchIntroduce?userId=" + getUserIdRes.data;
         const response = await axios.get(api);
         // console.log("response:",response.data);
-        if(response.data){
+        if (response.data) {
           setHaveIntroduce(true);
           setIntroduceList(response.data);
         }
-        else{
+        else {
           setHaveIntroduce(false);
         }
       } catch (error) {
@@ -476,8 +476,8 @@ export default function Individual() {
               <Tab label="我的文章" {...a11yProps(0)} />
               <Tab label="配對自介" {...a11yProps(1)} />
               {/* <Tab label="訊息" {...a11yProps(2)} /> */}
-              <Tab label="配對結果" {...a11yProps(3)} />
-              <Tab label="修改個人資料" {...a11yProps(4)} />
+              <Tab label="配對結果" {...a11yProps(2)} />
+              <Tab label="修改個人資料" {...a11yProps(3)} />
             </Tabs>
           </Box>
           <Box sx={{ backgroundColor: '#f3f5f6', width: '600px' }}>
@@ -552,10 +552,10 @@ export default function Individual() {
             {/* <CustomTabPanel value={value} index={2}>
               訊息
             </CustomTabPanel> */}
-            <CustomTabPanel value={value} index={3}>
+            <CustomTabPanel value={value} index={2}>
               尚無配對結果
             </CustomTabPanel>
-            <CustomTabPanel value={value} index={4}>
+            <CustomTabPanel value={value} index={3}>
               <TableContainer component={Paper}>
                 <Table sx={{ maxWidth: 650 }} aria-label="simple table">
                   <TableBody>
@@ -579,14 +579,12 @@ export default function Individual() {
       </Box>
       <Modal
         open={introduceModalOpen}
-        // fullScre/en
         onClose={IntroduceModalClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        
-          <Box sx={style}>
-          {introduceModalOpen && ( // 檢查modal是否存在
+        <Box sx={style}>
+          {introduceModalOpen && ( 
             <Box display="flex"
               alignItems="flex-start"
               justifyContent="space-between"
@@ -612,17 +610,6 @@ export default function Individual() {
                     </IconButton>
                   </Box>
                 )}
-                {/* {revise && (
-                  <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
-                    <img src={introduceList?.img} alt="Uploaded" style={{ width: '100%', height: '100%', objectFit: 'fill' }} />
-                    <IconButton
-                      sx={{ position: 'absolute', top: 0, right: 0, color: 'white' }}
-                      onClick={() => setImageURL('')}
-                    >
-                      <ClearIcon />
-                    </IconButton>
-                  </Box>
-                )} */}
 
                 <Box p='7px' sx={{
                   borderRadius: 1, bgcolor: "#a49e9e", opacity: '0.6', '&:hover': {
@@ -663,7 +650,6 @@ export default function Individual() {
                     label="公司名稱"
                     size="small"
                     name="companyName"
-                    // value={companyName}
                     value={companyName}
                     onChange={(e) => { setCompanyName(e.target.value) }}
                   />
@@ -684,7 +670,6 @@ export default function Individual() {
                     variant='outlined'
                     label="身高"
                     size="small"
-                    // value={tall}
                     value={tall}
                     onChange={(e) => {
                       setTall(e.target.value)
@@ -707,16 +692,13 @@ export default function Individual() {
                   <br />
                 </Grid>
                 <Grid item >
-                  {/* <FormControl> */}
                   <FormLabel id="demo-row-radio-buttons-group-label">是否要配對</FormLabel>
                   <RadioGroup
                     row
                     aria-labelledby="demo-row-radio-buttons-group-label"
                     name="row-radio-buttons-group"
-                    value={matchState.toString()} // 将布尔状态转换为字符串
-                    onChange={(e) => { setMatchState(e.target.value === "true") }} 
-                    // value={matchState}
-                    // onChange={(e) => { setMatchState(e.target.value) }}
+                    value={matchState.toString()}
+                    onChange={(e) => { setMatchState(e.target.value === "true") }}
                   >
                     <FormControlLabel value="true" control={<Radio />} label="是" />
                     <FormControlLabel value="false" control={<Radio />} label="否" />
@@ -725,14 +707,12 @@ export default function Individual() {
                     <Button variant="contained" size="small" onClick={(e) => handleSave()}>儲存</Button>
 
                   </Box>
-                  {/* </FormControl> */}
                 </Grid>
               </Grid>
             </Box>
-            // </div>
           )}
 
-          </Box>
+        </Box>
       </Modal>
       <Modal
         open={reviseEmail}
@@ -750,24 +730,36 @@ export default function Individual() {
               <Typography variant="body1" sx={{ verticalAlign: 'top' }}>
                 目前信箱:{localStorage.getItem("email:")}
               </Typography>
-              <TextField
-                type="text"
-                variant='outlined'
-                label="新信箱"
-                size="small"
-                onMouseLeave={handleNewEmailChange}
-                error={oldPasswordError !== ''}
-                helperText={oldPasswordError}
-              />
-              <TextField
-                type="text"
-                variant='outlined'
-                label="確認信箱"
-                size="small"
-                onChange={handleConfirmNewEmailChange}
-                error={error !== ''}
-                helperText={error}
-              />
+              <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined" size='small'>
+                <InputLabel htmlFor="outlined-adornment-oldPassword">新信箱</InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-oldPassword"
+                  value={newEmail}
+                  onChange={handleNewEmailChange}
+                  error={error !== ''}
+                  label="新信箱"
+                />
+                {error && (
+                  <Typography variant="body2" color="error" sx={{ marginTop: '4px', marginX: '14px', fontSize: '0.75rem' }}>
+                    {error}
+                  </Typography>
+                )}
+              </FormControl>
+              <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined" size='small'>
+                <InputLabel htmlFor="outlined-adornment-confirmOldPassword">確認信箱</InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-confirmOldPassword"
+                  value={confirmNewEmail}
+                  onChange={handleConfirmNewEmailChange}
+                  error={error !== ''}
+                  label="確認信箱"
+                />
+                {error && (
+                  <Typography variant="body2" color="error" sx={{ marginTop: '4px', marginX: '14px', fontSize: '0.75rem' }}>
+                    {error}
+                  </Typography>
+                )}
+              </FormControl>
               <Button variant="contained" size="small" onClick={() => handleReviseEmail()}>更改</Button>
               {reviseSuccess && <Alert icon={<CheckIcon fontSize="inherit" />} severity="success" style={{ width: '200px', position: 'fixed', bottom: "5%", left: '15%' }}>
                 更改信箱成功!
@@ -820,58 +812,8 @@ export default function Individual() {
               alignItems="center"
               justifyContent="center"
               gap={3}>
-              {/* <TextField
-                type="text"
-                variant='outlined'
-                label="請輸入目前密碼:"
-                size="small"
-                value={oldPassword}
-                onChange={handleOldPasswordChange}
-                // onMouseLeave={handleMouseLeave}
-                error={oldPasswordError !== '' && !verifyOldPassword}
-                helperText={verifyOldPassword ? "密碼正確" : oldPasswordError}
-              /> */}
-              {/* <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined" size='small'>
-               <InputLabel htmlFor="outlined-adornment-password">目前密碼</InputLabel>
-                <OutlinedInput
-                  id="outlined-adornment-password"
-                  type={showPassword ? 'text' : 'password'}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                  value={newPassword}
-                  onChange={handleNewPasswordChange}
-                  error={newPasswordError !== ''}
-                  // helperText={newPasswordError}
-                  label="新密碼"
-                />
-                 {newPasswordError&& (
-                  <Typography variant="body2" color="error" sx={{ marginTop:'4px',marginX:'14px',fontSize:'0.75rem' }}>
-                    {newPasswordError}
-                  </Typography>
-                )}
-              </FormControl> */}
-              {/* <TextField
-                type="text"
-                variant='outlined'
-                label="新密碼"
-                size="small"
-                value={newPassword}
-                onChange={handleNewPasswordChange}
-                error={newPasswordError !== ''}
-                helperText={newPasswordError}
-              /> */}
               <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined" size='small'>
-               <InputLabel htmlFor="outlined-adornment-password">新密碼</InputLabel>
+                <InputLabel htmlFor="outlined-adornment-password">新密碼</InputLabel>
                 <OutlinedInput
                   id="outlined-adornment-password"
                   type={showPassword ? 'text' : 'password'}
@@ -890,17 +832,16 @@ export default function Individual() {
                   value={newPassword}
                   onChange={handleNewPasswordChange}
                   error={newPasswordError !== ''}
-                  // helperText={newPasswordError}
                   label="新密碼"
                 />
-                 {newPasswordError&& (
-                  <Typography variant="body2" color="error" sx={{ marginTop:'4px',marginX:'14px',fontSize:'0.75rem' }}>
+                {newPasswordError && (
+                  <Typography variant="body2" color="error" sx={{ marginTop: '4px', marginX: '14px', fontSize: '0.75rem' }}>
                     {newPasswordError}
                   </Typography>
                 )}
               </FormControl>
               <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined" size='small'>
-               <InputLabel htmlFor="outlined-adornment-password">確認密碼</InputLabel>
+                <InputLabel htmlFor="outlined-adornment-password">確認密碼</InputLabel>
                 <OutlinedInput
                   id="outlined-adornment-password"
                   type={showPassword ? 'text' : 'password'}
@@ -921,22 +862,12 @@ export default function Individual() {
                   error={confirmPasswordError !== ''}
                   label="確認密碼"
                 />
-                {confirmPasswordError&& (
-                  <Typography variant="body2" color="error" sx={{ marginTop:'4px',marginX:'14px',fontSize:'0.75rem' }}>
+                {confirmPasswordError && (
+                  <Typography variant="body2" color="error" sx={{ marginTop: '4px', marginX: '14px', fontSize: '0.75rem' }}>
                     {confirmPasswordError}
                   </Typography>
                 )}
               </FormControl>
-              {/* <TextField
-                type="text"
-                variant='outlined'
-                label="確認密碼"
-                size="small"
-                value={confirmNewPassword}
-                onChange={handleConfirmNewPasswordChange}
-                error={confirmPasswordError !== ''}
-                helperText={confirmPasswordError}
-              /> */}
               <Button variant="contained" size="small" onClick={() => handleRevisePassword()}>更改</Button>
               {reviseSuccess && <Alert icon={<CheckIcon fontSize="inherit" />} severity="success" style={{ width: '200px', position: 'fixed', bottom: "5%", left: '15%' }}>
                 更改密碼成功!

@@ -10,8 +10,10 @@ import Individual from "./pages/Individual/individual";
 import PostByBoard from "./pages/PostByBoard/selectPostByBoard";
 import Match from "./pages/MatchIndex/match";
 import MatchTarget from "./pages/MatchTarget/matchTarget";
-import MatchResult from "./pages/MatchResult/matchResult";
+import MatchResult from "./pages/MatchResult/matchUnsuccess";
 import MatchFail from "./pages/MatchFail/matchFail";
+import MatchSuccess from "./pages/MatchResult/matchSuccess";
+import MatchUnsuccess from "./pages/MatchResult/matchUnsuccess";
 // import Match from "./pages/Match/match";
 // import { Individual } from "./pages/Indi
 
@@ -30,7 +32,8 @@ function App() {
         <Route path="/match" element={<Match/>} />
         <Route path="/matchTarget" element={<MatchTarget/>} />
         <Route path="/matchResult" element={<MatchResult/>} />
-        <Route path="/matchFail" element={<MatchFail/>} />
+        <Route path="/matchSuccess" element={<MatchSuccess/>} />
+        <Route path="/matchUnsuccess" element={<MatchUnsuccess/>} />
       </Routes>
     </div>
   );
